@@ -10,13 +10,15 @@ import {
 	Token,
 	FakeFuncParam,
 } from './interface'
+import path from 'path'
 
+type ImportMap = { [k: string]: string }
 /**
  * Called on the first entry and also when traversing into new imports.
  */
-export function processFile(file: string, parents: string[]): Ast | null {
-	const program = ts.createProgram({ rootNames: [file], options: {} })
-	const sf = program.getSourceFile(file)
+export function processFile(filePath: string, parents: string[]): Ast | null {
+	const program = ts.createProgram({ rootNames: [filePath], options: {} })
+	const sf = program.getSourceFile(filePath)
 	if (sf === undefined) {
 		return null
 	}
@@ -24,15 +26,16 @@ export function processFile(file: string, parents: string[]): Ast | null {
 	let comment: string | undefined = undefined
 	let name: string = ''
 	let nodes: TreeItem[] = []
-	let importMap: { [k: string]: string } = {}
+	let im: ImportMap = {}
 	let newParent: string[] = [...parents]
+	const dir = path.dirname(filePath)
 
 	ts.forEachChild(sf, (node) => {
 		if (ts.isImportDeclaration(node)) {
 			const ic = node.importClause
 			const ms = node.moduleSpecifier
 			if (ic !== undefined && ic.name !== undefined && ts.isStringLiteral(ms)) {
-				importMap[ic.name.escapedText.toString()] = ms.text
+				im[ic.name.escapedText.toString()] = ms.text
 			}
 		}
 		if (ts.isVariableStatement(node)) {
@@ -46,13 +49,13 @@ export function processFile(file: string, parents: string[]): Ast | null {
 				}
 				if (dec.initializer) {
 					if (ts.isObjectLiteralExpression(dec.initializer)) {
-						nodes = processObjectLiteral(dec.initializer, newParent, sf)
+						nodes = processObjectLiteral(dec.initializer, newParent, sf, im, dir)
 					}
 				}
 			}
 		}
 	})
-	const ast: Ast = { nodes: nodes, comment: comment, name: newParent }
+	const ast: Ast = { nodes: nodes, comment: comment, keys: newParent }
 	return ast
 }
 
@@ -63,27 +66,48 @@ export function processFile(file: string, parents: string[]): Ast | null {
  * - string
  * - arrow function
  */
-function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile): TreeItem | null {
+function propAss(
+	c: ts.PropertyAssignment,
+	parents: string[],
+	sf: ts.SourceFile,
+	im: ImportMap,
+	currentDirectory: string,
+): TreeItem | null {
 	const newParents = [...parents]
 	const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
 	const comment = getComment(c, sf)
 	newParents.push(name)
 	const initializer = c.initializer
 	if (ts.isObjectLiteralExpression(initializer)) {
-		const nodes = processObjectLiteral(initializer, newParents, sf)
+		const nodes = processObjectLiteral(initializer, newParents, sf, im, currentDirectory)
 		const ret: Group = {
 			comment: comment,
 			nodes: nodes,
-			name: newParents,
+			keys: newParents,
 		}
 		return ret
 	}
 	if (ts.isIdentifier(initializer)) {
+		const importName = initializer.text
+		if (importName in im) {
+			const p = path.join(currentDirectory, im[importName] + '.ts')
+			const ast = processFile(p, newParents)
+			if (ast !== null) {
+				const ret: Group = {
+					comment: ast.comment,
+					keys: ast.keys,
+					nodes: ast.nodes,
+				}
+				return ret
+			} else {
+				throw new Error('Failed resolving to path ' + p)
+			}
+		}
 	}
 	if (ts.isStringLiteral(initializer)) {
 		const ret: NoParams = {
 			comment: comment,
-			name: newParents,
+			keys: newParents,
 			text: initializer.text,
 		}
 		return ret
@@ -100,7 +124,7 @@ function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile)
 		}
 		const ret: WithParams = {
 			comment: comment,
-			name: newParents,
+			keys: newParents,
 			params: args,
 			tokens: tokens,
 		}
@@ -215,11 +239,13 @@ function processObjectLiteral(
 	c: ts.ObjectLiteralExpression,
 	parents: string[],
 	sf: ts.SourceFile,
+	im: ImportMap,
+	currentDirectory: string,
 ): TreeItem[] {
 	let nodes: TreeItem[] = []
 	c.properties.forEach((x) => {
 		if (ts.isPropertyAssignment(x)) {
-			const made = propAss(x, parents, sf)
+			const made = propAss(x, parents, sf, im, currentDirectory)
 			if (made !== null) {
 				nodes.push(made)
 			}

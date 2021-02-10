@@ -1898,34 +1898,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cleanformat.js@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "cleanformat.js@workspace:."
-  dependencies:
-    "@types/jest": ^26.0.20
-    "@types/lodash": ^4.14.168
-    "@types/node": ^14.14.25
-    "@typescript-eslint/eslint-plugin": ^4.15.0
-    "@typescript-eslint/parser": ^4.15.0
-    "@yarnpkg/pnpify": ^2.4.0
-    eslint: ^7.19.0
-    eslint-config-airbnb: ^18.2.1
-    eslint-config-prettier: ^7.2.0
-    eslint-plugin-import: ^2.22.1
-    eslint-plugin-prettier: ^3.3.1
-    eslint-plugin-simple-import-sort: ^7.0.0
-    jest: ^26.6.3
-    prettier: ^2.2.1
-    react: ^17.0.1
-    react-intl: ^5.12.2
-    ts-jest: ^26.5.1
-    tsutils: ^3.20.0
-    typescript: ^4.1.4
-  bin:
-    hi: dist/index.js
-  languageName: unknown
-  linkType: soft
-
 "clipanion@npm:^2.6.2":
   version: 2.6.2
   resolution: "clipanion@npm:2.6.2"
@@ -6794,6 +6766,34 @@ fsevents@^2.1.2:
   checksum: f8c4b4249f52e8bea7a4fc55b3653c96c2d547240e4c772e001d02b7cc38b8c3eb493ab9fbe985a76a203cd1aa7044776b728a71ba12bf36e7131f989597885b
   languageName: node
   linkType: hard
+
+"typed-string-resource@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "typed-string-resource@workspace:."
+  dependencies:
+    "@types/jest": ^26.0.20
+    "@types/lodash": ^4.14.168
+    "@types/node": ^14.14.25
+    "@typescript-eslint/eslint-plugin": ^4.15.0
+    "@typescript-eslint/parser": ^4.15.0
+    "@yarnpkg/pnpify": ^2.4.0
+    eslint: ^7.19.0
+    eslint-config-airbnb: ^18.2.1
+    eslint-config-prettier: ^7.2.0
+    eslint-plugin-import: ^2.22.1
+    eslint-plugin-prettier: ^3.3.1
+    eslint-plugin-simple-import-sort: ^7.0.0
+    jest: ^26.6.3
+    prettier: ^2.2.1
+    react: ^17.0.1
+    react-intl: ^5.12.2
+    ts-jest: ^26.5.1
+    tsutils: ^3.20.0
+    typescript: ^4.1.4
+  bin:
+    hi: dist/index.js
+  languageName: unknown
+  linkType: soft
 
 "typedarray-to-buffer@npm:^3.1.5":
   version: 3.1.5

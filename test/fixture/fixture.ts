@@ -28,7 +28,7 @@ const outer = {
 			)}`,
 	},
 	/** comment 1.2 */
-	level12: 'Level12-string',
+	level12: 'level12-string',
 }
 
 export default outer

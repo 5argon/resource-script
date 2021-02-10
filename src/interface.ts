@@ -54,5 +54,5 @@ export interface BaseNode {
 	/**
 	 * Collected hierarchical keys from root parent leading to this node.
 	 */
-	name: string[]
+	keys: string[]
 }
