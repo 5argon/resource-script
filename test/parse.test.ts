@@ -1,13 +1,16 @@
 import {
 	Ast,
 	nodeIsGroup,
-	nodeIsNoParams,
-	nodeIsWithParams,
+	nodeIsText,
+	nodeIsTextParams,
 	parse,
 	tokenIsFunctionToken,
 	tokenIsParamToken,
 	tokenIsTextToken,
 	FunctionTokenParamType,
+	nodeIsNumeric,
+	nodeIsTextArray,
+	nodeIsNumericArray,
 } from '../src'
 function parseAst(): Ast {
 	const p = parse('./test/fixture/fixture.ts')
@@ -21,12 +24,12 @@ test('Outer', () => {
 	const ast = parseAst()
 	expect(ast.keys).toEqual(['outer'])
 	expect(ast.comment).toBe('comment 0')
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 })
 
 test('First inner', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	expect(n0.keys).toEqual(['outer', 'level11'])
@@ -40,7 +43,7 @@ test('First inner', () => {
 	const n1 = ast.nodes[1]
 	expect(n1.keys).toEqual(['outer', 'level12'])
 	expect(n1.comment).toBe('comment 1.2')
-	if (nodeIsNoParams(n1)) {
+	if (nodeIsText(n1)) {
 		expect(n1.text).toBe('level12-string')
 	} else {
 		fail()
@@ -49,7 +52,7 @@ test('First inner', () => {
 
 test('Inner object - string', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	if (nodeIsGroup(n0)) {
@@ -57,7 +60,7 @@ test('Inner object - string', () => {
 		const i2 = n0.nodes[1]
 		expect(i2.comment).toBe('comment 2.2')
 		expect(i2.keys).toEqual(['outer', 'level11', 'level22'])
-		if (nodeIsNoParams(i2)) {
+		if (nodeIsText(i2)) {
 			expect(i2.text).toBe('level22-string')
 		} else {
 			fail()
@@ -67,9 +70,51 @@ test('Inner object - string', () => {
 	}
 })
 
+test('Inner object - numeric', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(6)
+
+	const n = ast.nodes[2]
+	if (nodeIsNumeric(n)) {
+		expect(n.comment).toBe('comment 1.3')
+		expect(n.keys).toEqual(['outer', 'level13'])
+		expect(n.value).toEqual(5555)
+	} else {
+		fail()
+	}
+})
+
+test('Inner object - string array', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(6)
+
+	const n = ast.nodes[3]
+	if (nodeIsTextArray(n)) {
+		expect(n.comment).toBe('comment 1.4')
+		expect(n.keys).toEqual(['outer', 'level14'])
+		expect(n.texts).toEqual(['string1', 'string2', 'string3'])
+	} else {
+		fail()
+	}
+})
+
+test('Inner object - numeric array', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(6)
+
+	const n = ast.nodes[4]
+	if (nodeIsNumericArray(n)) {
+		expect(n.comment).toBe('comment 1.5')
+		expect(n.keys).toEqual(['outer', 'level15'])
+		expect(n.values).toEqual([111, 222, 333])
+	} else {
+		fail()
+	}
+})
+
 test('Inner object - arrow function 1 arg', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	expect(nodeIsGroup(n0)).toBe(true)
@@ -78,7 +123,7 @@ test('Inner object - arrow function 1 arg', () => {
 		const i3 = n0.nodes[2]
 		expect(i3.comment).toBe('comment 2.3')
 		expect(i3.keys).toEqual(['outer', 'level11', 'level23'])
-		if (nodeIsWithParams(i3)) {
+		if (nodeIsTextParams(i3)) {
 			expect(i3.tokens).toHaveLength(2)
 			if (tokenIsParamToken(i3.tokens[0])) {
 				expect(i3.tokens[0].paramName).toBe('firstArg')
@@ -100,7 +145,7 @@ test('Inner object - arrow function 1 arg', () => {
 
 test('Inner object - arrow function 2 args', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	expect(nodeIsGroup(n0)).toBe(true)
@@ -109,7 +154,7 @@ test('Inner object - arrow function 2 args', () => {
 		const i4 = n0.nodes[3]
 		expect(i4.comment).toBe('comment 2.4')
 		expect(i4.keys).toEqual(['outer', 'level11', 'level24'])
-		if (nodeIsWithParams(i4)) {
+		if (nodeIsTextParams(i4)) {
 			expect(i4.tokens).toHaveLength(4)
 			if (tokenIsParamToken(i4.tokens[0])) {
 				expect(i4.tokens[0].paramName).toBe('firstArg')
@@ -141,7 +186,7 @@ test('Inner object - arrow function 2 args', () => {
 
 test('Inner object - arrow function with literal function', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	expect(nodeIsGroup(n0)).toBe(true)
@@ -150,7 +195,7 @@ test('Inner object - arrow function with literal function', () => {
 		const i5 = n0.nodes[4]
 		expect(i5.comment).toBe('comment 2.5')
 		expect(i5.keys).toEqual(['outer', 'level11', 'level25'])
-		if (nodeIsWithParams(i5)) {
+		if (nodeIsTextParams(i5)) {
 			expect(i5.tokens).toHaveLength(4)
 			if (tokenIsTextToken(i5.tokens[0])) {
 				expect(i5.tokens[0].text).toBe('span string 1 ')
@@ -202,7 +247,7 @@ test('Inner object - arrow function with literal function', () => {
 
 test('Inner object - imports', () => {
 	const ast = parseAst()
-	expect(ast.nodes).toHaveLength(2)
+	expect(ast.nodes).toHaveLength(6)
 
 	const n0 = ast.nodes[0]
 	expect(nodeIsGroup(n0)).toBe(true)
@@ -229,7 +274,7 @@ test('Inner object - imports', () => {
 						'levelLinked11',
 						'levelLinked21',
 					])
-					if (nodeIsNoParams(n1.nodes[0])) {
+					if (nodeIsText(n1.nodes[0])) {
 						expect(n1.nodes[0].text).toBe('level-linked-21-string')
 					} else {
 						fail()
@@ -242,7 +287,7 @@ test('Inner object - imports', () => {
 						'levelLinked11',
 						'levelLinked22',
 					])
-					if (nodeIsNoParams(n1.nodes[1])) {
+					if (nodeIsText(n1.nodes[1])) {
 						expect(n1.nodes[1].text).toBe('level-linked-22-string')
 					} else {
 						fail()
@@ -256,7 +301,7 @@ test('Inner object - imports', () => {
 				const n2 = i1.nodes[1]
 				expect(n2.comment).toBe('comment linked 1.2')
 				expect(n2.keys).toEqual(['outer', 'level11', 'level21', 'levelLinked12'])
-				if (nodeIsNoParams(n2)) {
+				if (nodeIsText(n2)) {
 					expect(n2.text).toBe('level-linked-12-string')
 				} else {
 					fail()

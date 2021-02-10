@@ -29,6 +29,14 @@ const outer = {
 	},
 	/** comment 1.2 */
 	level12: 'level12-string',
+	/** comment 1.3 */
+	level13: 5555,
+	/** comment 1.4 */
+	level14: ['string1', 'string2', 'string3'],
+	/** comment 1.5 */
+	level15: [111, 222, 333],
+	/** comment 1.6 */
+	level16: 'level16-string',
 }
 
 export default outer

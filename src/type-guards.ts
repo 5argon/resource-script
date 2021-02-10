@@ -2,22 +2,33 @@ import {
 	BaseNode,
 	FunctionToken,
 	Group,
-	NoParams,
+	Text,
 	ParamToken,
 	TextToken,
 	Token,
-	WithParams,
+	TextParams,
+	Numeric,
+	TextArray,
+	NumericArray,
 } from './interface'
 
 export function nodeIsGroup(bn: BaseNode): bn is Group {
 	return 'nodes' in bn
 }
-export function nodeIsNoParams(bn: BaseNode): bn is NoParams {
+export function nodeIsText(bn: BaseNode): bn is Text {
 	return 'text' in bn
 }
-
-export function nodeIsWithParams(bn: BaseNode): bn is WithParams {
+export function nodeIsTextParams(bn: BaseNode): bn is TextParams {
 	return 'params' in bn && 'tokens' in bn
+}
+export function nodeIsNumeric(bn: BaseNode): bn is Numeric {
+	return 'value' in bn
+}
+export function nodeIsTextArray(bn: BaseNode): bn is TextArray {
+	return 'texts' in bn
+}
+export function nodeIsNumericArray(bn: BaseNode): bn is NumericArray {
+	return 'values' in bn
 }
 
 export function tokenIsTextToken(tk: Token): tk is TextToken {

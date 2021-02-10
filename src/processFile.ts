@@ -5,22 +5,27 @@ import {
 	Ast,
 	Group,
 	TreeItem,
-	NoParams,
-	WithParams,
+	Text,
+	TextParams,
 	Token,
 	FunctionTokenParam,
+	Numeric,
+	TextArray,
+	NumericArray,
 } from './interface'
 import path from 'path'
+import { first } from 'lodash'
 
 type ImportMap = { [k: string]: string }
+
 /**
  * Called on the first entry and also when traversing into new imports.
  */
-export function processFile(filePath: string, parents: string[], depth: number): Ast | null {
+export function processFile(filePath: string, parents: string[], depth: number): Ast {
 	const program = ts.createProgram({ rootNames: [filePath], options: {} })
 	const sf = program.getSourceFile(filePath)
 	if (sf === undefined) {
-		return null
+		throw new Error('File not found at ' + filePath)
 	}
 
 	let comment: string | undefined = undefined
@@ -115,12 +120,59 @@ function propAss(
 		}
 	}
 	if (ts.isStringLiteral(initializer)) {
-		const ret: NoParams = {
+		const ret: Text = {
 			comment: comment,
 			keys: newParents,
 			text: initializer.text,
 		}
 		return ret
+	}
+	if (ts.isNumericLiteral(initializer)) {
+		const ret: Numeric = {
+			comment: comment,
+			keys: newParents,
+			value: parseInt(initializer.text, 10),
+		}
+		return ret
+	}
+	if (ts.isArrayLiteralExpression(initializer)) {
+		if (initializer.elements.length === 0) {
+			throw new Error('Array value must have at least 1 element.')
+		}
+		const firstElement = initializer.elements[0]
+		if (ts.isStringLiteral(firstElement)) {
+			const collect: string[] = []
+			initializer.elements.forEach((x) => {
+				if (ts.isStringLiteral(x)) {
+					collect.push(x.text)
+				} else {
+					throw new Error('Array value must be either all strings, or all numbers.')
+				}
+			})
+			const ret: TextArray = {
+				comment: comment,
+				keys: newParents,
+				texts: collect,
+			}
+			return ret
+		} else if (ts.isNumericLiteral(firstElement)) {
+			const collect: number[] = []
+			initializer.elements.forEach((x) => {
+				if (ts.isNumericLiteral(x)) {
+					collect.push(parseInt(x.text, 10))
+				} else {
+					throw new Error('Array value must be either all strings, or all numbers.')
+				}
+			})
+			const ret: NumericArray = {
+				comment: comment,
+				keys: newParents,
+				values: collect,
+			}
+			return ret
+		} else {
+			throw new Error('Array value must be either all strings, or all numbers.')
+		}
 	}
 	if (ts.isArrowFunction(initializer)) {
 		const args: Params[] = initializer.parameters.map<Params>((x) => {
@@ -132,7 +184,7 @@ function propAss(
 		if (ts.isTemplateExpression(body)) {
 			tokens.push(...processTemplateExpression(body))
 		}
-		const ret: WithParams = {
+		const ret: TextParams = {
 			comment: comment,
 			keys: newParents,
 			params: args,

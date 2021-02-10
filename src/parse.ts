@@ -2,8 +2,8 @@ import { Ast } from './interface'
 import { processFile } from './processFile'
 
 /**
- * If the file is not found or malformed, returns `undefined`.
+ * Throw if the file is not found or malformed.
  */
-export function parse(files: string): Ast | undefined {
-	return processFile(files, [], 0) ?? undefined
+export function parse(files: string): Ast {
+	return processFile(files, [], 0)
 }

@@ -3,7 +3,7 @@
  */
 export type Ast = Group
 
-export type TreeItem = Group | NoParams | WithParams
+export type TreeItem = Group | Text | TextParams | Numeric | TextArray | NumericArray
 
 /**
  * Nesting into the same type.
@@ -12,17 +12,26 @@ export interface Group extends BaseNode {
 	nodes: TreeItem[]
 }
 
-/**
- * When using a simple string.
- */
-export interface NoParams extends BaseNode {
+export interface Text extends BaseNode {
 	text: string
+}
+
+export interface Numeric extends BaseNode {
+	value: number
+}
+
+export interface TextArray extends BaseNode {
+	texts: string[]
+}
+
+export interface NumericArray extends BaseNode {
+	values: number[]
 }
 
 /**
  * When using arrow function that produces a template literal.
  */
-export interface WithParams extends BaseNode {
+export interface TextParams extends BaseNode {
 	params: Params[]
 	/**
 	 * Lined up from left to right. Concatenate them to get the full string.
