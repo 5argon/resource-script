@@ -1,11 +1,5 @@
 # TypedStringResource
 
-String resource definition file format in TypeScript.
-
-## What is a "definition file" ?
-
-
-
 First you should survey roughly how these packages works, because it highlights i18n problems in production.
 
 -   [Format.JS / react-intl](https://formatjs.io/)

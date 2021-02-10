@@ -39,7 +39,7 @@ interface FakeFunc {
 }
 export interface FakeFuncParam {
 	content: string | number
-	type: 'string' | 'number' | 'enum' | 'unsupported'
+	type: 'string' | 'number' | 'enum'
 }
 
 export interface Params {
@@ -47,7 +47,7 @@ export interface Params {
 	type: ParamType
 }
 
-export type ParamType = 'string' | 'number' | 'date' | 'unsupported'
+export type ParamType = 'string' | 'number' | 'date'
 
 export interface BaseNode {
 	comment: string | undefined

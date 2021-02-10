@@ -6,7 +6,7 @@ Resource files can prevent hard-coding strings into your code and help with loca
 
 ## Key Features
 
-The resource file doubles as a valid TypeScript code. Though many TypeScript features are ignored.
+The resource file doubles as a valid TypeScript code. But unlike an actual code, many language elements are used creatively as a part of string resource. The object keys acts as the string resource's hierarchical keys. The arrow function parameter names doesn't really exist in real TypeScript program, same goes for all the typings, but here they are interpreted as strings. We "borrow" the language server to help us write a type checked resource file.
 
 ### Hierarchical keys
 
@@ -39,7 +39,7 @@ Instead of using curly brackets with hard-coded strings, it uses JavaScript temp
 -   Renaming the template variable is easy if you use rename feature in your code editor.
 -   Possible to put a function inside that each argument is type safe. The function inside template literal can design something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) where you need to provide "logic", all encoded as a string, which would be quite stressful if the case is complex.
 
-### Terms organization with imports
+### Terms spanning multiple files with imports
 
 Each file is a TypeScript module with a single `default` export. You can continue the hierarchy in an another Typed String Resource file. The parsed result will count as if the term has common parent. This make the resource file scalable, where in some other solutions each file is on its own.
 

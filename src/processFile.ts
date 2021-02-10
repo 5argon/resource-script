@@ -54,6 +54,8 @@ export function processFile(filePath: string, parents: string[]): Ast | null {
 				}
 			}
 		}
+		// Silently pass all other top level declarations.
+		// User can declare other helpers creatively.
 	})
 	const ast: Ast = { nodes: nodes, comment: comment, keys: newParent }
 	return ast
@@ -72,7 +74,7 @@ function propAss(
 	sf: ts.SourceFile,
 	im: ImportMap,
 	currentDirectory: string,
-): TreeItem | null {
+): TreeItem {
 	const newParents = [...parents]
 	const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
 	const comment = getComment(c, sf)
@@ -130,7 +132,9 @@ function propAss(
 		}
 		return ret
 	}
-	return null
+	throw new Error(
+		"The right side of object's key must be either : object (nesting), string literal, identifier (imports), arrow function.",
+	)
 }
 
 /**
@@ -175,10 +179,9 @@ function processTemplateExpression(t: ts.TemplateExpression): Token[] {
 						type: 'number',
 					}
 				}
-				return {
-					content: '',
-					type: 'unsupported',
-				}
+				throw new Error(
+					'When using functions inside template literal, its arguments must be either : identifier, enums, or number.',
+				)
 			})
 			collect.push({ functionName: funcName, params: ffp })
 		}
@@ -191,44 +194,46 @@ function processTemplateExpression(t: ts.TemplateExpression): Token[] {
  * Maps arrow function params into supported type token in the AST.
  */
 function parseArrowFunctionParams(x: ts.ParameterDeclaration): Params {
-	const name: string = ts.isIdentifier(x.name) ? x.name.text : '???'
-	const t = x.type
-	if (!t) {
-		const par: Params = {
-			text: name,
-			type: 'unsupported',
+	if (ts.isIdentifier(x.name)) {
+		const name: string = x.name.text
+		const t = x.type
+		if (!t) {
+			throw new Error("Must define a type on the arrow function's parameters.")
 		}
-		return par
-	}
-	if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName) && t.typeName.text === 'Date') {
-		const par: Params = {
-			text: name,
-			type: 'date',
-		}
-		return par
-	}
-	switch (t.kind) {
-		case ts.SyntaxKind.NumberKeyword: {
+		if (
+			ts.isTypeReferenceNode(t) &&
+			ts.isIdentifier(t.typeName) &&
+			t.typeName.text === 'Date'
+		) {
 			const par: Params = {
 				text: name,
-				type: 'number',
+				type: 'date',
 			}
 			return par
 		}
-		case ts.SyntaxKind.StringKeyword: {
-			const par: Params = {
-				text: name,
-				type: 'string',
+		switch (t.kind) {
+			case ts.SyntaxKind.NumberKeyword: {
+				const par: Params = {
+					text: name,
+					type: 'number',
+				}
+				return par
 			}
-			return par
-		}
-		default: {
-			const par: Params = {
-				text: name,
-				type: 'unsupported',
+			case ts.SyntaxKind.StringKeyword: {
+				const par: Params = {
+					text: name,
+					type: 'string',
+				}
+				return par
 			}
-			return par
+			default: {
+				throw new Error(
+					"Arrow function's parameter must be of type : string, number, or Date.",
+				)
+			}
 		}
+	} else {
+		throw new Error('Unexpected non-identifier on the arrow function.')
 	}
 }
 
@@ -246,9 +251,9 @@ function processObjectLiteral(
 	c.properties.forEach((x) => {
 		if (ts.isPropertyAssignment(x)) {
 			const made = propAss(x, parents, sf, im, currentDirectory)
-			if (made !== null) {
-				nodes.push(made)
-			}
+			nodes.push(made)
+		} else {
+			throw new Error('Nested object must lead into property assignment.')
 		}
 	})
 	return nodes
