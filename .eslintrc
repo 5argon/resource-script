@@ -1,0 +1,63 @@
+{
+	"env": {
+		"browser": true,
+		"node": true,
+		"es6": true,
+		"jest": true
+	},
+	"extends": [
+		"airbnb",
+		"plugin:@typescript-eslint/recommended",
+		"prettier",
+		"prettier/react",
+		"prettier/@typescript-eslint",
+		"plugin:import/typescript"
+	],
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["prettier", "simple-import-sort"],
+	"rules": {
+		"no-console": "warn",
+		"no-new": "off",
+		"no-return-assign": "off",
+		"no-param-reassign": "off",
+        "sort-imports": "off",
+        "no-use-before-define": "off",
+		"import/order": "off",
+		"import/prefer-default-export": "off",
+		"import/extensions": "off",
+		"import/no-extraneous-dependencies": [
+			"error",
+			{
+				"devDependencies": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.story.tsx"]
+			}
+		],
+		"simple-import-sort/imports": "error",
+		"react/no-danger": "off",
+		"react/no-this-in-sfc": "off",
+		"react/no-array-index-key": "off",
+		"react/jsx-filename-extension": [
+			1,
+			{
+				"extensions": [".ts", ".tsx"]
+			}
+		],
+		"react/prop-types": "off",
+		"jsx-a11y/click-events-have-key-events": "off",
+		"jsx-a11y/img-redundant-alt": "off",
+		"jsx-a11y/label-has-for": "off",
+		"jsx-a11y/label-has-associated-control": "off",
+		"jsx-a11y/no-static-element-interactions": "off",
+		"jsx-a11y/no-noninteractive-element-interactions": "off",
+		"jsx-a11y/interactive-supports-focus": "off",
+		"jsx-a11y/anchor-is-valid": "off",
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/explicit-member-accessibility": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/camelcase": "off",
+		"@typescript-eslint/no-empty-interface": "off",
+		"@typescript-eslint/no-use-before-define": "off",
+		"no-shadow": "off",
+		"@typescript-eslint/no-shadow": ["error"],
+		"prettier/prettier": ["error"]
+	}
+}

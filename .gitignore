@@ -1,0 +1,31 @@
+# For Yarn V2
+node_modules
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# For Yarn V2 (No zero install)
+node_modules
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# TypeScript Build Mode cache
+tsconfig.tsbuildinfo
+tsconfig-build.tsbuildinfo
+
+dist
+
+**.DS_Store
+
+.idea
