@@ -144,10 +144,12 @@ function propAss(
  */
 function processTemplateExpression(t: ts.TemplateExpression): Token[] {
 	const collect: Token[] = []
-	collect.push(t.head.text)
+	if (t.head.text !== '') {
+		collect.push({ text: t.head.text })
+	}
 	t.templateSpans.forEach((x) => {
 		if (ts.isIdentifier(x.expression)) {
-			collect.push('{' + x.expression.text + '}')
+			collect.push({ paramName: x.expression.text })
 		}
 		if (ts.isCallExpression(x.expression)) {
 			const lhs = x.expression.expression
@@ -185,7 +187,8 @@ function processTemplateExpression(t: ts.TemplateExpression): Token[] {
 			})
 			collect.push({ functionName: funcName, params: ffp })
 		}
-		collect.push(x.literal.text)
+		// The remaining string of this span
+		collect.push({ text: x.literal.text })
 	})
 	return collect
 }

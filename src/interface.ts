@@ -30,10 +30,14 @@ export interface WithParams extends BaseNode {
 	tokens: Token[]
 }
 
-export type Token = Simple | Var | FakeFunc
-type Simple = string
-type Var = string
-interface FakeFunc {
+export type Token = TextToken | ParamToken | FunctionToken
+export interface TextToken {
+	text: string
+}
+export interface ParamToken {
+	paramName: string
+}
+export interface FunctionToken {
 	functionName: string
 	params: FakeFuncParam[]
 }

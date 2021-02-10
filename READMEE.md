@@ -2,11 +2,11 @@
 
 Resource files can prevent hard-coding strings into your code and help with localization by simply swapping the file. For example .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in authoring, features, and flexibility.
 
-`typed-string-resource` proposes a new programmer-centric file format for storing string resource, and toolings to parse it.
+`typed-string-resource` proposes a new programmer-centric file format for storing string resource, and a code to parse it. You get an abstract syntax tree (AST) to do whatever you want.
 
-## Key Features
+## Features
 
-The resource file doubles as a valid TypeScript code. But unlike an actual code, many language elements are used creatively as a part of string resource. The object keys acts as the string resource's hierarchical keys. The arrow function parameter names doesn't really exist in real TypeScript program, same goes for all the typings, but here they are interpreted as strings. We "borrow" the language server to help us write a type checked resource file.
+This resource file doubles as a valid TypeScript code. But unlike an actual code, many language elements are used creatively as a part of string resource. The object keys acts as the string resource's hierarchical keys. The arrow function parameter names doesn't really exist in real TypeScript program, same goes for all the typings, but here they are interpreted as strings. We "borrow" the language server to help us write a type checked resource file.
 
 ### Hierarchical keys
 
