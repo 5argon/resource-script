@@ -47,13 +47,25 @@ Since imports are real TypeScript tokens, you can also use "Go To Definition" in
 
 Though not so useful, you can use imports in different place and the result will be as if they are different leaves. Hierarchical keys took care of any key duplication problems when you do this.
 
+WARNING : Please avoid import cycle, it **will** cause infinite loop. (PR welcome!)
+
+### Use it as-is in a TypeScript program!
+
+It is intended to be a resource that needs a parser to be useful, not a code. But of course it will work as a regular TypeScript module. In rare cases it might be useful to use it that way...
+
 ## Conventions
 
 -   Many TypeScript features will has no effect on the parser provided, but there is no editor plugin or anything that treats them as an error. Please avoid doing that on your own.
--   Name the file as `___.tsr.ts`.
+-   Name the file as `___.tsr.ts` to make it clear that this is not actually a code.
 
-## Abstract Syntax Tree
+## Parsing into an Abstract Syntax Tree (AST)
 
-The parser is essentially just using `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API). This is the only export from this package :
+Resource file would not be of any use without a parser. The parser is essentially just using `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API). This is the only export from this package :
 
-### `typedStringResource.parse(files : string[]) : Ast`
+```ts
+function parse(filePath: string): Ast
+```
+
+When traversing the returned `Ast` object in TypeScript, provided type guards will be useful. (This is similar pattern to the TypeScript's Compiler API.)
+
+I didn't write any documentation on the shape of the returned object yet but it should be fairly straightforward to learn from the `interface.ts` file. Type guards can also be learned from `type-guards.ts` file. Also of course the test file will show a usage from package consumer's perspective.
