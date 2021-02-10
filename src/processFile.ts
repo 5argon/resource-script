@@ -8,7 +8,7 @@ import {
 	NoParams,
 	WithParams,
 	Token,
-	FakeFuncParam,
+	FunctionTokenParam,
 } from './interface'
 import path from 'path'
 
@@ -157,7 +157,7 @@ function processTemplateExpression(t: ts.TemplateExpression): Token[] {
 			if (ts.isIdentifier(lhs)) {
 				funcName = lhs.text
 			}
-			const ffp = x.expression.arguments.map<FakeFuncParam>((x) => {
+			const ffp = x.expression.arguments.map<FunctionTokenParam>((x) => {
 				if (ts.isIdentifier(x)) {
 					return {
 						content: x.text,
@@ -188,7 +188,9 @@ function processTemplateExpression(t: ts.TemplateExpression): Token[] {
 			collect.push({ functionName: funcName, params: ffp })
 		}
 		// The remaining string of this span
-		collect.push({ text: x.literal.text })
+		if (x.literal.text !== '') {
+			collect.push({ text: x.literal.text })
+		}
 	})
 	return collect
 }

@@ -4,8 +4,10 @@ import {
 	nodeIsNoParams,
 	nodeIsWithParams,
 	parse,
+	tokenIsFunctionToken,
 	tokenIsParamToken,
 	tokenIsTextToken,
+	FunctionTokenParamType,
 } from '../src'
 function parseAst(): Ast {
 	const p = parse('./test/fixture/fixture.ts')
@@ -85,6 +87,108 @@ test('Inner object - arrow function 1 arg', () => {
 			}
 			if (tokenIsTextToken(i3.tokens[1])) {
 				expect(i3.tokens[1].text).toBe(' span string 1')
+			} else {
+				fail()
+			}
+		} else {
+			fail()
+		}
+	} else {
+		fail()
+	}
+})
+
+test('Inner object - arrow function 2 args', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(2)
+
+	const n0 = ast.nodes[0]
+	expect(nodeIsGroup(n0)).toBe(true)
+	if (nodeIsGroup(n0)) {
+		expect(n0.nodes).toHaveLength(5)
+		const i4 = n0.nodes[3]
+		expect(i4.comment).toBe('comment 2.4')
+		expect(i4.keys).toEqual(['outer', 'level11', 'level24'])
+		if (nodeIsWithParams(i4)) {
+			expect(i4.tokens).toHaveLength(4)
+			if (tokenIsParamToken(i4.tokens[0])) {
+				expect(i4.tokens[0].paramName).toBe('firstArg')
+			} else {
+				fail()
+			}
+			if (tokenIsTextToken(i4.tokens[1])) {
+				expect(i4.tokens[1].text).toBe(' span string 1 ')
+			} else {
+				fail()
+			}
+			if (tokenIsParamToken(i4.tokens[2])) {
+				expect(i4.tokens[2].paramName).toBe('secondArg')
+			} else {
+				fail()
+			}
+			if (tokenIsTextToken(i4.tokens[3])) {
+				expect(i4.tokens[3].text).toBe(' span string 2')
+			} else {
+				fail()
+			}
+		} else {
+			fail()
+		}
+	} else {
+		fail()
+	}
+})
+
+test('Inner object - arrow function with literal function', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(2)
+
+	const n0 = ast.nodes[0]
+	expect(nodeIsGroup(n0)).toBe(true)
+	if (nodeIsGroup(n0)) {
+		expect(n0.nodes).toHaveLength(5)
+		const i5 = n0.nodes[4]
+		expect(i5.comment).toBe('comment 2.5')
+		expect(i5.keys).toEqual(['outer', 'level11', 'level25'])
+		if (nodeIsWithParams(i5)) {
+			expect(i5.tokens).toHaveLength(4)
+			if (tokenIsTextToken(i5.tokens[0])) {
+				expect(i5.tokens[0].text).toBe('span string 1 ')
+			} else {
+				fail()
+			}
+			if (tokenIsFunctionToken(i5.tokens[1])) {
+				expect(i5.tokens[1].functionName).toBe('LitFunc')
+				expect(i5.tokens[1].params).toHaveLength(3)
+
+				expect(i5.tokens[1].params[0].content).toBe('firstArg')
+				expect(i5.tokens[1].params[0].type).toBe<FunctionTokenParamType>('string')
+
+				expect(i5.tokens[1].params[1].content).toBe('En1')
+				expect(i5.tokens[1].params[1].type).toBe<FunctionTokenParamType>('enum')
+
+				expect(i5.tokens[1].params[2].content).toBe(10)
+				expect(i5.tokens[1].params[2].type).toBe<FunctionTokenParamType>('number')
+			} else {
+				fail()
+			}
+			if (tokenIsTextToken(i5.tokens[2])) {
+				expect(i5.tokens[2].text).toBe(' span string 2 ')
+			} else {
+				fail()
+			}
+			if (tokenIsFunctionToken(i5.tokens[3])) {
+				expect(i5.tokens[3].functionName).toBe('LitFunc')
+				expect(i5.tokens[3].params).toHaveLength(3)
+
+				expect(i5.tokens[3].params[0].content).toBe('secondArg')
+				expect(i5.tokens[3].params[0].type).toBe<FunctionTokenParamType>('string')
+
+				expect(i5.tokens[3].params[1].content).toBe('En2')
+				expect(i5.tokens[3].params[1].type).toBe<FunctionTokenParamType>('enum')
+
+				expect(i5.tokens[3].params[2].content).toBe(20)
+				expect(i5.tokens[3].params[2].type).toBe<FunctionTokenParamType>('number')
 			} else {
 				fail()
 			}

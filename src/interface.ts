@@ -39,12 +39,14 @@ export interface ParamToken {
 }
 export interface FunctionToken {
 	functionName: string
-	params: FakeFuncParam[]
+	params: FunctionTokenParam[]
 }
-export interface FakeFuncParam {
+export interface FunctionTokenParam {
 	content: string | number
-	type: 'string' | 'number' | 'enum'
+	type: FunctionTokenParamType
 }
+
+export type FunctionTokenParamType = 'string' | 'number' | 'enum'
 
 export interface Params {
 	text: string

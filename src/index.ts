@@ -1,3 +1,3 @@
 export * from './parse'
 export * from './type-guards'
-export { Ast } from './interface'
+export type { Ast, FunctionTokenParamType } from './interface'
