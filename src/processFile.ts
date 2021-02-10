@@ -16,7 +16,7 @@ type ImportMap = { [k: string]: string }
 /**
  * Called on the first entry and also when traversing into new imports.
  */
-export function processFile(filePath: string, parents: string[]): Ast | null {
+export function processFile(filePath: string, parents: string[], depth: number): Ast | null {
 	const program = ts.createProgram({ rootNames: [filePath], options: {} })
 	const sf = program.getSourceFile(filePath)
 	if (sf === undefined) {
@@ -43,13 +43,13 @@ export function processFile(filePath: string, parents: string[]): Ast | null {
 			const decs = node.declarationList.declarations
 			if (decs.length > 0) {
 				const dec = decs[0]
-				if (ts.isIdentifier(dec.name)) {
+				if (ts.isIdentifier(dec.name) && depth === 0) {
 					name = dec.name.text
 					newParent.push(name)
 				}
 				if (dec.initializer) {
 					if (ts.isObjectLiteralExpression(dec.initializer)) {
-						nodes = processObjectLiteral(dec.initializer, newParent, sf, im, dir)
+						nodes = processObjectLiteral(dec.initializer, newParent, sf, im, dir, depth)
 					}
 				}
 			}
@@ -74,6 +74,7 @@ function propAss(
 	sf: ts.SourceFile,
 	im: ImportMap,
 	currentDirectory: string,
+	currentDepth: number,
 ): TreeItem {
 	const newParents = [...parents]
 	const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
@@ -81,7 +82,14 @@ function propAss(
 	newParents.push(name)
 	const initializer = c.initializer
 	if (ts.isObjectLiteralExpression(initializer)) {
-		const nodes = processObjectLiteral(initializer, newParents, sf, im, currentDirectory)
+		const nodes = processObjectLiteral(
+			initializer,
+			newParents,
+			sf,
+			im,
+			currentDirectory,
+			currentDepth,
+		)
 		const ret: Group = {
 			comment: comment,
 			nodes: nodes,
@@ -93,11 +101,11 @@ function propAss(
 		const importName = initializer.text
 		if (importName in im) {
 			const p = path.join(currentDirectory, im[importName] + '.ts')
-			const ast = processFile(p, newParents)
+			const ast = processFile(p, newParents, currentDepth + 1)
 			if (ast !== null) {
 				const ret: Group = {
-					comment: ast.comment,
-					keys: ast.keys,
+					comment: comment,
+					keys: newParents,
 					nodes: ast.nodes,
 				}
 				return ret
@@ -251,11 +259,12 @@ function processObjectLiteral(
 	sf: ts.SourceFile,
 	im: ImportMap,
 	currentDirectory: string,
+	currentDepth: number,
 ): TreeItem[] {
 	let nodes: TreeItem[] = []
 	c.properties.forEach((x) => {
 		if (ts.isPropertyAssignment(x)) {
-			const made = propAss(x, parents, sf, im, currentDirectory)
+			const made = propAss(x, parents, sf, im, currentDirectory, currentDepth)
 			nodes.push(made)
 		} else {
 			throw new Error('Nested object must lead into property assignment.')

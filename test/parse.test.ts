@@ -199,3 +199,73 @@ test('Inner object - arrow function with literal function', () => {
 		fail()
 	}
 })
+
+test('Inner object - imports', () => {
+	const ast = parseAst()
+	expect(ast.nodes).toHaveLength(2)
+
+	const n0 = ast.nodes[0]
+	expect(nodeIsGroup(n0)).toBe(true)
+	if (nodeIsGroup(n0)) {
+		expect(n0.nodes).toHaveLength(5)
+		const i1 = n0.nodes[0]
+		expect(i1.comment).toBe('comment 2.1')
+		expect(i1.keys).toEqual(['outer', 'level11', 'level21'])
+		if (nodeIsGroup(i1)) {
+			expect(i1.nodes).toHaveLength(2)
+
+			{
+				const n1 = i1.nodes[0]
+				expect(n1.comment).toBe('comment linked 1.1')
+				expect(n1.keys).toEqual(['outer', 'level11', 'level21', 'levelLinked11'])
+				if (nodeIsGroup(n1)) {
+					expect(n1.nodes).toHaveLength(2)
+
+					expect(n1.nodes[0].comment).toBe('comment linked 2.1')
+					expect(n1.nodes[0].keys).toEqual([
+						'outer',
+						'level11',
+						'level21',
+						'levelLinked11',
+						'levelLinked21',
+					])
+					if (nodeIsNoParams(n1.nodes[0])) {
+						expect(n1.nodes[0].text).toBe('level-linked-21-string')
+					} else {
+						fail()
+					}
+					expect(n1.nodes[1].comment).toBe('comment linked 2.2')
+					expect(n1.nodes[1].keys).toEqual([
+						'outer',
+						'level11',
+						'level21',
+						'levelLinked11',
+						'levelLinked22',
+					])
+					if (nodeIsNoParams(n1.nodes[1])) {
+						expect(n1.nodes[1].text).toBe('level-linked-22-string')
+					} else {
+						fail()
+					}
+				} else {
+					fail()
+				}
+			}
+
+			{
+				const n2 = i1.nodes[1]
+				expect(n2.comment).toBe('comment linked 1.2')
+				expect(n2.keys).toEqual(['outer', 'level11', 'level21', 'levelLinked12'])
+				if (nodeIsNoParams(n2)) {
+					expect(n2.text).toBe('level-linked-12-string')
+				} else {
+					fail()
+				}
+			}
+		} else {
+			fail()
+		}
+	} else {
+		fail()
+	}
+})

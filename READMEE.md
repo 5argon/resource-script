@@ -6,7 +6,11 @@ Resource files can prevent hard-coding strings into your code and help with loca
 
 ## Features
 
-This resource file doubles as a valid TypeScript code. But unlike an actual code, many language elements are used creatively as a part of string resource. The object keys acts as the string resource's hierarchical keys. The arrow function parameter names doesn't really exist in real TypeScript program, same goes for all the typings, but here they are interpreted as strings. We "borrow" the language server to help us write a type checked resource file.
+This resource file doubles as a valid TypeScript code. But unlike an actual code, **language elements are used literally as a part of string resource**.
+
+For example, the object keys acts as the string resource's hierarchical keys. The arrow function parameter names and type notations which used to not really exist in real TypeScript, here they are interpreted meaningfully by the parser.
+
+We "borrow" the TypeScript language server to help us write an easy to maintain resource file. CSV is no longer the only format with a "dedicated editor". With Typed String Resource, your code editor is the ideal editor.
 
 ### Hierarchical keys
 
