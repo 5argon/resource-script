@@ -404,72 +404,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formatjs/ecma402-abstract@npm:1.5.2":
-  version: 1.5.2
-  resolution: "@formatjs/ecma402-abstract@npm:1.5.2"
-  dependencies:
-    tslib: ^2.0.1
-  checksum: 525af670a5e5a085810a8e62ab8f9bf8c3feff168b676ee9c60ef1409e4eb310679f5911ae72ff1c74230df0bbf59bed5d2c33cbd73ca06d023a61d96ddd4295
-  languageName: node
-  linkType: hard
-
-"@formatjs/intl-datetimeformat@npm:3.2.7":
-  version: 3.2.7
-  resolution: "@formatjs/intl-datetimeformat@npm:3.2.7"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    tslib: ^2.0.1
-  checksum: 6d955dee6572bdc08988c38443aa957d9bb6865c6970bb11dc0734532b50a5d5149fee0e94df21238918bc8c2a7c452dc1c343a53ce060bf691a762d85db0797
-  languageName: node
-  linkType: hard
-
-"@formatjs/intl-displaynames@npm:4.0.5":
-  version: 4.0.5
-  resolution: "@formatjs/intl-displaynames@npm:4.0.5"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    tslib: ^2.0.1
-  checksum: c72d480e5f7cac84fba1354f12f937717bad9d80873f0a50c5d7cd73dce1a80a88240a740ff39c8a3e87037337bbd5b626450b4bf616e7d77df313618ff4ddf1
-  languageName: node
-  linkType: hard
-
-"@formatjs/intl-listformat@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@formatjs/intl-listformat@npm:5.0.5"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    tslib: ^2.0.1
-  checksum: 81ce6457d5824cacffa4636e77a3bc37f85ce879bd18a9521ecad2e7c0c2633d11007d57b3f00dcfeeb9e52c41b5658a1c8c47688c9c0cce06732aa972025573
-  languageName: node
-  linkType: hard
-
-"@formatjs/intl-relativetimeformat@npm:8.0.4":
-  version: 8.0.4
-  resolution: "@formatjs/intl-relativetimeformat@npm:8.0.4"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    tslib: ^2.0.1
-  checksum: a17e433adf7a549c9c37f739d6ac9fecad43817d69e1b128b75c1ea75f685383a2cb07284478f7e6c7d49aea837bfbcbcbc234638937fcf02e25393183f829b3
-  languageName: node
-  linkType: hard
-
-"@formatjs/intl@npm:1.6.7":
-  version: 1.6.7
-  resolution: "@formatjs/intl@npm:1.6.7"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    "@formatjs/intl-datetimeformat": 3.2.7
-    "@formatjs/intl-displaynames": 4.0.5
-    "@formatjs/intl-listformat": 5.0.5
-    "@formatjs/intl-relativetimeformat": 8.0.4
-    fast-memoize: ^2.5.2
-    intl-messageformat: 9.4.6
-    intl-messageformat-parser: 6.3.1
-    tslib: ^2.0.1
-  checksum: caacb89fbdf5bbad27a4fa152495b24ce815a04851ff2286a3aaa91be3524dfe0d29af5abd9c6f51f685abe2a0aa67be836f54cdae2981b1a5079d05190d3ea0
-  languageName: node
-  linkType: hard
-
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
   resolution: "@istanbuljs/load-nyc-config@npm:1.1.0"
@@ -815,16 +749,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "@types/hoist-non-react-statics@npm:3.3.1"
-  dependencies:
-    "@types/react": "*"
-    hoist-non-react-statics: ^3.3.0
-  checksum: 16ab4c45d4920fa378c8be76554b10061247fc04d2c8af11bdb7d520b3967e9c06d7ad5efd9b0f1657fbc4d095f62c6e1325f03b9141eb1ef2c8095b96fd42f8
-  languageName: node
-  linkType: hard
-
 "@types/http-cache-semantics@npm:*":
   version: 4.0.0
   resolution: "@types/http-cache-semantics@npm:4.0.0"
@@ -922,23 +846,6 @@ __metadata:
   version: 2.2.0
   resolution: "@types/prettier@npm:2.2.0"
   checksum: 68d29aee4cc009c863388cce564406599630cd287c830436e943cebfd38280c15903e2e74f0270b25f8ef84307030600e1fd4bdc3205c2aa17eae758b9560d3e
-  languageName: node
-  linkType: hard
-
-"@types/prop-types@npm:*":
-  version: 15.7.3
-  resolution: "@types/prop-types@npm:15.7.3"
-  checksum: bd0eab69d5120ad3784d0c9985f902653d5924707a7f2b3702a330e762dfd61b6494954cb54ad0c52b918ffd6f1e7e27c9270e4442bc15250de348596f2f60cb
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:*":
-  version: 17.0.1
-  resolution: "@types/react@npm:17.0.1"
-  dependencies:
-    "@types/prop-types": "*"
-    csstype: ^3.0.2
-  checksum: 5b490728c5210ea20b20377dd8c69b12ba7283058788d431d8b35ff4d18d03aa3a0f0cc6fe83691c8b9707d3e7ee8e9aae4e50d3989e094c907030d045d0e4e2
   languageName: node
   linkType: hard
 
@@ -2114,13 +2021,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2":
-  version: 3.0.6
-  resolution: "csstype@npm:3.0.6"
-  checksum: ebdca96d26e1af5604658e6876af29ac1e218750efb587684f2b2b13bb062a397b351586d285f911e6985e03112e56c2aee127d35ae7354cc7d25f3000e22556
-  languageName: node
-  linkType: hard
-
 "dashdash@npm:^1.12.0":
   version: 1.14.1
   resolution: "dashdash@npm:1.14.1"
@@ -2877,13 +2777,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-memoize@npm:^2.5.2":
-  version: 2.5.2
-  resolution: "fast-memoize@npm:2.5.2"
-  checksum: 88bd91488039c0e04131d5382b8ea084268f144ce14ab36c360dd04f7792ac0c419e125b0fe6e6f41e77f03d1f703b31697475b2e95889ca86510623e2f0d904
-  languageName: node
-  linkType: hard
-
 "fastq@npm:^1.6.0":
   version: 1.10.1
   resolution: "fastq@npm:1.10.1"
@@ -3332,15 +3225,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
-  version: 3.3.2
-  resolution: "hoist-non-react-statics@npm:3.3.2"
-  dependencies:
-    react-is: ^16.7.0
-  checksum: d3e3791d6e3a2741ce0ba38e878081dec49247ef22982a990c80941ee1f564ef16cd5a511bcc8c5e54f1ce8205535e0414ca5feea722c0690c80040be7ebf9df
-  languageName: node
-  linkType: hard
-
 "hosted-git-info@npm:^2.1.4":
   version: 2.8.8
   resolution: "hosted-git-info@npm:2.8.8"
@@ -3472,27 +3356,6 @@ fsevents@^2.1.2:
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 98426da247ddfc3dcd7d7daedd90c3ca32d5b08deca08949726f12d49232aef94772a07b36cf4ff833e105ae2ef931777f6de4a6dd8245a216b9299ad4a50bea
-  languageName: node
-  linkType: hard
-
-"intl-messageformat-parser@npm:6.3.1":
-  version: 6.3.1
-  resolution: "intl-messageformat-parser@npm:6.3.1"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    tslib: ^2.0.1
-  checksum: f82bf1f4d05fa413b2f5cae78758881ef4ec8a1aaa40699c89339aebb7b087307e91a71ada9377ecb4a0f81c80a200618490173b30956cdbe5c39be5064a9f05
-  languageName: node
-  linkType: hard
-
-"intl-messageformat@npm:9.4.6":
-  version: 9.4.6
-  resolution: "intl-messageformat@npm:9.4.6"
-  dependencies:
-    fast-memoize: ^2.5.2
-    intl-messageformat-parser: 6.3.1
-    tslib: ^2.0.1
-  checksum: 25cf15115d32fb3babc0ff425b0078283bb74b2b2fc0e5283585ed67cbab3b9576e55dfc2952740fd280ef70cdf2c2ee746fe28cbecd950a64993ca41ad979ba
   languageName: node
   linkType: hard
 
@@ -4324,7 +4187,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
+"js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: 1fc4e4667ac2d972aba65148b9cbf9c17566b2394d3504238d8492bbd3e68f496c657eab06b26b40b17db5cac0a34d153a12130e2d2d2bb6dc2cdc8a4764eb1b
@@ -4618,17 +4481,6 @@ fsevents@^2.1.2:
   version: 4.17.20
   resolution: "lodash@npm:4.17.20"
   checksum: c62101d2500c383b5f174a7e9e6fe8098149ddd6e9ccfa85f36d4789446195f5c4afd3cfba433026bcaf3da271256566b04a2bf2618e5a39f6e67f8c12030cb6
-  languageName: node
-  linkType: hard
-
-"loose-envify@npm:^1.1.0":
-  version: 1.4.0
-  resolution: "loose-envify@npm:1.4.0"
-  dependencies:
-    js-tokens: ^3.0.0 || ^4.0.0
-  bin:
-    loose-envify: cli.js
-  checksum: 5c3b47bbe5f597a3889fb001a3a98aaea2a3fafa48089c19034de1e0121bf57dbee609d184478514d74d5c5a7e9cfa3d846343455e5123b060040d46c39e91dc
   languageName: node
   linkType: hard
 
@@ -5038,7 +4890,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
+"object-assign@npm:^4.1.0":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: 66cf021898fc1b13ea573ea8635fbd5a76533f50cecbc2fcd5eee1e8029af41bcebe7023788b6d0e06cbe4401ecea075d972f78ec74467cdc571a0f1a4d1a081
@@ -5562,53 +5414,10 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-intl@npm:^5.12.2":
-  version: 5.12.2
-  resolution: "react-intl@npm:5.12.2"
-  dependencies:
-    "@formatjs/ecma402-abstract": 1.5.2
-    "@formatjs/intl": 1.6.7
-    "@formatjs/intl-displaynames": 4.0.5
-    "@formatjs/intl-listformat": 5.0.5
-    "@formatjs/intl-relativetimeformat": 8.0.4
-    "@types/hoist-non-react-statics": ^3.3.1
-    fast-memoize: ^2.5.2
-    hoist-non-react-statics: ^3.3.2
-    intl-messageformat: 9.4.6
-    intl-messageformat-parser: 6.3.1
-    shallow-equal: ^1.2.1
-    tslib: ^2.0.1
-  peerDependencies:
-    react: ^16.3.0 || 17
-    typescript: 4
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 890d41992a5d1e5164dee50d9e071f8689f6620dbf5f93a06be049468b5e18ada903bea2aec0bd44b29445c906e47572832c5c1936161269ce1e28c1d47fe82a
-  languageName: node
-  linkType: hard
-
-"react-is@npm:^16.7.0":
-  version: 16.13.1
-  resolution: "react-is@npm:16.13.1"
-  checksum: 11bcf1267a314a522615f626f3ce3727a3a24cdbf61c4d452add3550a7875326669631326cfb1ba3e92b6f72244c32ffecf93ad21c0cad8455d3e169d0e3f060
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^17.0.1":
   version: 17.0.1
   resolution: "react-is@npm:17.0.1"
   checksum: 5a83dfc78e7adcb93d632bf367b0733db650e3abd2e9c57c33b87e50d201212c1884b0d7bcf13e692f1556189fa1b87f9f3e0ba10fe858fd6aebe83ed4fcd1ea
-  languageName: node
-  linkType: hard
-
-"react@npm:^17.0.1":
-  version: 17.0.1
-  resolution: "react@npm:17.0.1"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: a76d86ec973eb4b25a46071ac7f974adfd66ed89ad1db63043be1d976ec25417520a210e6d724b0ad937422b706afcf9962cedda9e92125992a8c0e8a95f2051
   languageName: node
   linkType: hard
 
@@ -5850,6 +5659,30 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"resource-script@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "resource-script@workspace:."
+  dependencies:
+    "@types/jest": ^26.0.20
+    "@types/lodash": ^4.14.168
+    "@types/node": ^14.14.25
+    "@typescript-eslint/eslint-plugin": ^4.15.0
+    "@typescript-eslint/parser": ^4.15.0
+    "@yarnpkg/pnpify": ^2.4.0
+    eslint: ^7.19.0
+    eslint-config-airbnb: ^18.2.1
+    eslint-config-prettier: ^7.2.0
+    eslint-plugin-import: ^2.22.1
+    eslint-plugin-prettier: ^3.3.1
+    eslint-plugin-simple-import-sort: ^7.0.0
+    jest: ^26.6.3
+    prettier: ^2.2.1
+    ts-jest: ^26.5.1
+    tsutils: ^3.20.0
+    typescript: ^4.1.4
+  languageName: unknown
+  linkType: soft
+
 "responselike@npm:^2.0.0":
   version: 2.0.0
   resolution: "responselike@npm:2.0.0"
@@ -6003,13 +5836,6 @@ fsevents@^2.1.2:
     is-plain-object: ^2.0.3
     split-string: ^3.0.1
   checksum: a97a99a00cc5ed3034ccd690ff4dde167e4182ec4ef2fd5277637a6e388839292559301408b91405534b44e76450bdd443ac95427fde40e9a1a62102c1262bd1
-  languageName: node
-  linkType: hard
-
-"shallow-equal@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "shallow-equal@npm:1.2.1"
-  checksum: 5002ac4a3639e35782d3cb21073d48e1e4f85321cc54608f48b2331f6db6d54e4f4b44ed81ec4d75385ebe893e8286752b1e29595381e6adad72dd836f001b7f
   languageName: node
   linkType: hard
 
@@ -6680,13 +6506,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1":
-  version: 2.1.0
-  resolution: "tslib@npm:2.1.0"
-  checksum: d8f5bdd067611651c6b846c2388f4dc8ba1f5af124e66105f5263d1ad56da17f4b8c6566887ca2f205c5a9758451871ceca87d5d06087af2dca1699c5e33db69
-  languageName: node
-  linkType: hard
-
 "tsutils@npm:^3.17.1, tsutils@npm:^3.20.0":
   version: 3.20.0
   resolution: "tsutils@npm:3.20.0"
@@ -6766,34 +6585,6 @@ fsevents@^2.1.2:
   checksum: f8c4b4249f52e8bea7a4fc55b3653c96c2d547240e4c772e001d02b7cc38b8c3eb493ab9fbe985a76a203cd1aa7044776b728a71ba12bf36e7131f989597885b
   languageName: node
   linkType: hard
-
-"typed-string-resource@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "typed-string-resource@workspace:."
-  dependencies:
-    "@types/jest": ^26.0.20
-    "@types/lodash": ^4.14.168
-    "@types/node": ^14.14.25
-    "@typescript-eslint/eslint-plugin": ^4.15.0
-    "@typescript-eslint/parser": ^4.15.0
-    "@yarnpkg/pnpify": ^2.4.0
-    eslint: ^7.19.0
-    eslint-config-airbnb: ^18.2.1
-    eslint-config-prettier: ^7.2.0
-    eslint-plugin-import: ^2.22.1
-    eslint-plugin-prettier: ^3.3.1
-    eslint-plugin-simple-import-sort: ^7.0.0
-    jest: ^26.6.3
-    prettier: ^2.2.1
-    react: ^17.0.1
-    react-intl: ^5.12.2
-    ts-jest: ^26.5.1
-    tsutils: ^3.20.0
-    typescript: ^4.1.4
-  bin:
-    hi: dist/index.js
-  languageName: unknown
-  linkType: soft
 
 "typedarray-to-buffer@npm:^3.1.5":
   version: 3.1.5
