@@ -18,6 +18,12 @@ Notable design that can use hierarchical keys is JSON. But this has better synta
 -   Real hierarchy allows you to mass-rename any middle part of the hierarchy easily.
 -   You can use it to generate into flattened hierarchy with `.` or `/` joiners to interop with other systems that doesn't understand hierarchy.
 
+### Comments as metadata
+
+Add comments to any terms by typing them above. It is increasingly important when you are making resource for internationalization and needed to give context to the translators.
+
+Some text editor can then show or hide comments, improving editing experience and you no longer fear of typing long comments.
+
 ### Great editing experience with TypeScript
 
 -   You can get syntax highlighting from code editor to help authoring it.
@@ -51,4 +57,3 @@ Though not so useful, you can use imports in different place and the result will
 The parser is essentially just using `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API). This is the only export from this package :
 
 ### `typedStringResource.parse(files : string[]) : Ast`
-

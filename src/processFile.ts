@@ -1,6 +1,15 @@
 import * as ts from 'typescript'
 import * as utils from 'tsutils'
-import { Arg, Ast, Group, NodeType, Simple, WithArgs } from './interface'
+import {
+	Params,
+	Ast,
+	Group,
+	TreeItem,
+	NoParams,
+	WithParams,
+	Token,
+	FakeFuncParam,
+} from './interface'
 
 /**
  * Called on the first entry and also when traversing into new imports.
@@ -14,7 +23,7 @@ export function processFile(file: string, parents: string[]): Ast | null {
 
 	let comment: string | undefined = undefined
 	let name: string = ''
-	let nodes: NodeType[] = []
+	let nodes: TreeItem[] = []
 	let importMap: { [k: string]: string } = {}
 	let newParent: string[] = [...parents]
 
@@ -54,7 +63,7 @@ export function processFile(file: string, parents: string[]): Ast | null {
  * - string
  * - arrow function
  */
-function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile): NodeType | null {
+function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile): TreeItem | null {
 	const newParents = [...parents]
 	const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
 	const comment = getComment(c, sf)
@@ -72,28 +81,28 @@ function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile)
 	if (ts.isIdentifier(initializer)) {
 	}
 	if (ts.isStringLiteral(initializer)) {
-		const ret: Simple = {
+		const ret: NoParams = {
 			comment: comment,
 			name: newParents,
-			value: initializer.text,
+			text: initializer.text,
 		}
 		return ret
 	}
 	if (ts.isArrowFunction(initializer)) {
-		const args: Arg[] = initializer.parameters.map<Arg>((x) => {
+		const args: Params[] = initializer.parameters.map<Params>((x) => {
 			return parseArrowFunctionParams(x)
 		})
 
 		const body = initializer.body
-		let value: string = ''
+		const tokens: Token[] = []
 		if (ts.isTemplateExpression(body)) {
-			value = processTemplateExpression(body)
+			tokens.push(...processTemplateExpression(body))
 		}
-		const ret: WithArgs = {
+		const ret: WithParams = {
 			comment: comment,
 			name: newParents,
-			args: args,
-			value: value,
+			params: args,
+			tokens: tokens,
 		}
 		return ret
 	}
@@ -103,57 +112,95 @@ function propAss(c: ts.PropertyAssignment, parents: string[], sf: ts.SourceFile)
 /**
  * Turn template expression into full string.
  * `abc ${de} fgh` -> "abc {de} fgh"
+ * If function call found, supports 3 kinds of args : identifier, enums, number.
  */
-function processTemplateExpression(t: ts.TemplateExpression): string {
-	const collect: string[] = []
+function processTemplateExpression(t: ts.TemplateExpression): Token[] {
+	const collect: Token[] = []
 	collect.push(t.head.text)
 	t.templateSpans.forEach((x) => {
 		if (ts.isIdentifier(x.expression)) {
 			collect.push('{' + x.expression.text + '}')
 		}
+		if (ts.isCallExpression(x.expression)) {
+			const lhs = x.expression.expression
+			let funcName = ''
+			if (ts.isIdentifier(lhs)) {
+				funcName = lhs.text
+			}
+			const ffp = x.expression.arguments.map<FakeFuncParam>((x) => {
+				if (ts.isIdentifier(x)) {
+					return {
+						content: x.text,
+						type: 'string',
+					}
+				}
+				if (ts.isPropertyAccessExpression(x)) {
+					const iden: string = ts.isIdentifier(x.name)
+						? x.name.text
+						: ts.isPrivateIdentifier(x.name)
+						? x.name.text
+						: ''
+					return {
+						content: iden,
+						type: 'enum',
+					}
+				}
+				if (ts.isNumericLiteral(x)) {
+					return {
+						content: parseInt(x.text, 10),
+						type: 'number',
+					}
+				}
+				return {
+					content: '',
+					type: 'unsupported',
+				}
+			})
+			collect.push({ functionName: funcName, params: ffp })
+		}
 		collect.push(x.literal.text)
 	})
-	return collect.join()
+	return collect
 }
 
 /**
  * Maps arrow function params into supported type token in the AST.
  */
-function parseArrowFunctionParams(x: ts.ParameterDeclaration): Arg {
+function parseArrowFunctionParams(x: ts.ParameterDeclaration): Params {
 	const name: string = ts.isIdentifier(x.name) ? x.name.text : '???'
 	const t = x.type
 	if (!t) {
-		const par: Arg = {
-			name: name,
+		const par: Params = {
+			text: name,
 			type: 'unsupported',
 		}
 		return par
 	}
 	if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName) && t.typeName.text === 'Date') {
-		const par: Arg = {
-			name: name,
+		const par: Params = {
+			text: name,
 			type: 'date',
 		}
 		return par
 	}
 	switch (t.kind) {
 		case ts.SyntaxKind.NumberKeyword: {
-			const par: Arg = {
-				name: name,
+			const par: Params = {
+				text: name,
 				type: 'number',
 			}
 			return par
 		}
 		case ts.SyntaxKind.StringKeyword: {
-			const par: Arg = {
-				name: name,
+			const par: Params = {
+				text: name,
 				type: 'string',
 			}
 			return par
 		}
 		default: {
-			const par: Arg = {
-				name: name,
+			const par: Params = {
+				text: name,
 				type: 'unsupported',
 			}
 			return par
@@ -168,8 +215,8 @@ function processObjectLiteral(
 	c: ts.ObjectLiteralExpression,
 	parents: string[],
 	sf: ts.SourceFile,
-): NodeType[] {
-	let nodes: NodeType[] = []
+): TreeItem[] {
+	let nodes: TreeItem[] = []
 	c.properties.forEach((x) => {
 		if (ts.isPropertyAssignment(x)) {
 			const made = propAss(x, parents, sf)
