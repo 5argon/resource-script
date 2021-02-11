@@ -253,7 +253,7 @@ When traversing the returned `Ast` object in TypeScript, provided type guards wi
 
 I didn't write any documentation on the shape of the returned object yet but it should be fairly straightforward to learn from the `interface.ts` file. Type guards can also be learned from `type-guards.ts` file. Also of course the test file will show a usage from package consumer's perspective.
 
-## Converting Resource Script to JSON
+## Converting a Resource Script to JSON
 
 With the parser to AST maybe the first thing you want to write on is to convert it to a highly ubiquitous JSON. I have bundled a bonus script to do just that. [Details here](./documentation/to-json.md).
 

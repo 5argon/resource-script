@@ -1,10 +1,18 @@
-# Converting Resource Script to JSON
+# Converting a Resource Script to JSON
 
 Though not the original goal, I have exported a bonus method that can convert Resource Script AST into JSON string for fun : `astToJSON`.
 
-Also I added a bonus Node.JS package script called `to-json` that can be used on the `.rs.ts` file (multiple ok) to produce `.json` file in the same place.
+Also I added a bonus Node.JS package script called `resource-script to-json` that can be used on the `.rs.ts` file (multiple ok) to produce `.json` file in the same place.
 
 Not everything in Resource Script make sense in JSON, but the hierarchical aspect is still pretty much perfectly mappable. You may use it to try authoring a "TypeScript powered JSON" before converting to the real one for a change...
+
+```
+yarn resource-script to-json ./my-rs-file.rs.ts
+yarn resource-script to-json ./my-rs-file.rs.ts ./my-rs-file-2.rs.ts
+yarn resource-script to-json -c object ./my-rs-file.rs.ts
+yarn resource-script to-json -c deep ./my-rs-file.rs.ts
+yarn resource-script to-json -c forced-deep ./my-rs-file.rs.ts
+```
 
 For example if performend on this Resource Script files :
 
@@ -112,7 +120,7 @@ It converts to :
 ```
 
 -   Outermost object (`const outer = {`) is ignored.
--   There are 3 modes to convert comments available in `astToJSON`, or you can ignore all comments by providing `undefined`. The result above is using `'object'` mode, note that only some comments are transferred. (The one on the object, so we have a nice place to store it.)
+-   There are 3 modes to convert comments (via `-c` option) available in `astToJSON`, or you can ignore all comments by providing `undefined`. The result above is using `'object'` mode, note that only some comments are transferred. (The one on the object, so we have a nice place to store it.)
     -   `'object'` : Only transfer comments over the object to `"comment"` JSON key.
     -   `'deep'` : Also make comment on any non-object keys to turns the value to be `{ comment: ___, value: ___ }` instead to make room for storing the comment. This change the shape of data significantly for fields that has comment.
     -   `'forced-deep'` : Same as `'deep'` but even fields without comments are forced to have `{ comment: "", value: ___}`. (Empty string comment.)
