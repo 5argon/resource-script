@@ -1,4 +1,4 @@
-import linked from './fixture-sub'
+import linked from './fixture-sub.rs'
 
 enum En {
 	En1,

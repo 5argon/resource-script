@@ -6,9 +6,7 @@
 		"email": "pyasry@gmail.com",
 		"url": "https://5argon.info"
 	},
-	"bin": {
-		"resource-script": "./dist/bin-commands.js"
-	},
+	"bin": "./dist/bin-commands.js",
 	"scripts": {
 		"watch": "tsc -b -w",
 		"build": "tsc -b",
@@ -24,7 +22,6 @@
 	},
 	"devDependencies": {
 		"@types/jest": "^26.0.20",
-		"@types/lodash": "^4.14.168",
 		"@types/node": "^14.14.25",
 		"@types/yargs": "^16.0.0",
 		"@typescript-eslint/eslint-plugin": "^4.15.0",

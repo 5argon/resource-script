@@ -185,7 +185,7 @@ When you use arrow function parameters ("identifier") in the tuple (like `n` in 
 ### Resource hierarchy spanning multiple files with imports
 
 ```ts
-import infoModule from './infoModule'
+import infoModule from './infoModule.rs'
 
 const main = {
 	name: '5argon',
@@ -210,6 +210,7 @@ Imports can be used by typing the "identifier" on the right side of the key. Rem
 -   Since imports are real TypeScript tokens, you can also use "Go To Definition" in your editor to quickly jump to the target file and back. Giving you more incentive to split files because in other solutions you may not want to navigate on the browser too much.
 -   Similarly you can come back by using "Find All References". When there is only 1 reference which is usually the case, you can also do "Go To Definition" to jump back by most modern editors.
 -   Though not so useful, you can use imports in different place and the result will be as if they are different leaves. Hierarchical keys took care of any key duplication problems when you do this.
+-   Note that the import ends in `.rs` but the actual file is named `.rs.ts`.
 
 WARNING : Please avoid import cycle, it **will** cause infinite loop. (PR welcome!)
 
@@ -231,7 +232,7 @@ This make it possible to use it as a "file name" metadata that is built into the
 ## Conventions
 
 -   Many TypeScript features will have no effect on the parser provided or even throws error, but there is no editor plugin or anything that treats them as an error. Please avoid doing that on your own.
--   Name the file extension as `.rs.ts` to make it clear that this is not actually a code, yet still receive syntax highlighting and other toolings from TypeScript. This is important when you use `import` because the import path (which has no extension) will be suffixed with `.rs.ts` to try to find the file. (PR welcome to allow flexible resolution to `.ts`...)
+-   Name the file extension as `.rs.ts` to make it clear that this is not actually a code, yet still receive syntax highlighting and other toolings from TypeScript.
 
 ## Parsing into an Abstract Syntax Tree (AST)
 

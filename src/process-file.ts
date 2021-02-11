@@ -122,7 +122,7 @@ function processExpression(
 		const identName = exp.text
 		if (identifierAsImports) {
 			if (identName in im && dir !== '') {
-				const p = path.join(dir, im[identName] + '.rs.ts')
+				const p = path.join(dir, im[identName] + '.ts')
 				const ast = processFile(p, parents, depth + 1)
 				if (ast !== null) {
 					const ret: Group = {

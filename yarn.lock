@@ -814,13 +814,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.168":
-  version: 4.14.168
-  resolution: "@types/lodash@npm:4.14.168"
-  checksum: 9a4e25f89fc035b9f0388f1f7be85e5eff49f9e6db0d93432c9a89fce0916f8a89db4e8290415f7ea02de6b00d3573826378dcb655b7b2d20530a6e8d6dd6fd0
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*, @types/node@npm:^14.14.25":
   version: 14.14.25
   resolution: "@types/node@npm:14.14.25"
@@ -5641,7 +5634,6 @@ fsevents@^2.1.2:
   resolution: "resource-script@workspace:."
   dependencies:
     "@types/jest": ^26.0.20
-    "@types/lodash": ^4.14.168
     "@types/node": ^14.14.25
     "@types/yargs": ^16.0.0
     "@typescript-eslint/eslint-plugin": ^4.15.0
@@ -5660,7 +5652,7 @@ fsevents@^2.1.2:
     typescript: ^4.1.4
     yargs: ^16.2.0
   bin:
-    rs-to-json: dist/rs-to-json.js
+    resource-script: ./dist/bin-commands.js
   languageName: unknown
   linkType: soft
 
