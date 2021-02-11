@@ -28,7 +28,7 @@ Unlike JSON, Resource Script is actually a valid TypeScript code (though there i
 
 Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
 
-Still the parsing is probably quite heavier than others that I would **not recommend** Resource Script for realtime application. Resource Script would be a good fit for data that is quite "cold" that you want to put more emphasis to editing experience (especially if the programmers are the editor). It can then be pre-processed into more machine friendly data ahead of time.
+Still the parsing is probably quite heavier than others that I would **not recommend** Resource Script for realtime application. `tsc` is not fast, as [discussed by the Deno collaborators](https://github.com/denoland/deno/issues/5432). Resource Script would be a good fit for data that is quite "cold" that you want to put more emphasis to editing experience (especially if the programmers are the editor). It can then be pre-processed into more machine friendly data ahead of time.
 
 We "borrow" the TypeScript language server to help us write an easy to maintain resource file. CSV is no longer the only format with a "dedicated editor". With Resource Script, your code editor is the ideal editor. We gain an entire ecosystem of editor plugins used to work with TypeScript as well when our resource is exactly TypeScript like this. (e.g. `eslint`, `prettier`, etc.)
 
