@@ -9,6 +9,8 @@ import {
 	Bool,
 	BoolArray,
 	NamedTuple,
+	CustomType,
+	SupportedType,
 } from './interface'
 
 export function isGroup(bn: Value): bn is Group {
@@ -37,4 +39,10 @@ export function isTextTemplated(bn: Value): bn is TextTemplated {
 }
 export function isNamedTuple(bn: Value): bn is NamedTuple {
 	return 'tupleName' in bn && 'params' in bn
+}
+export function isCustomType(st: SupportedType): st is CustomType {
+	if (st !== 'string' && st !== 'number' && st !== 'boolean') {
+		return true
+	}
+	return false
 }

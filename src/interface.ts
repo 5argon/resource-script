@@ -77,9 +77,21 @@ export interface Params {
 	type: SupportedType
 }
 
-export type SupportedType = 'string' | 'number' | 'boolean' | 'enum' | { custom: string }
+/**
+ * Use `isCustomType` to differentiate custom type.
+ */
+export type SupportedType = 'string' | 'number' | 'boolean' | CustomType
 
-export type Token = Value
+export interface CustomType {
+	custom: string
+}
+
+/**
+ * Text token means anything not in the `${}`.
+ * But if an identifier is in `${}` then it is a text anyways.
+ */
+export type Token = TextToken | Value
+export type TextToken = string
 
 export interface NamedTuple {
 	tupleName: string

@@ -306,14 +306,14 @@ function processTemplateExpression(
 ): Token[] {
 	const collect: Token[] = []
 	if (t.head.text !== '') {
-		collect.push({ text: t.head.text })
+		collect.push(t.head.text)
 	}
 	t.templateSpans.forEach((x) => {
 		const sup = processExpression(x.expression, parents, sf, im, dir, depth, false)
 		collect.push(sup)
 		// The remaining string of this span
 		if (x.literal.text !== '') {
-			collect.push({ text: x.literal.text })
+			collect.push(x.literal.text)
 		}
 	})
 	return collect

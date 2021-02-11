@@ -12,7 +12,9 @@ const valueStorage = {
 export default valueStorage
 ```
 
-Resource Script is a programmer-centric data storage format that **looks like** TypeScript code. The package also provide a code written in TypeScript/JavaScript to parse and traverse the returned abstract syntax tree (AST) with Node.JS. You can use the provided type information and type guards to traverse the tree more easily.
+Resource Script is a programmer-centric data storage format that **looks like** TypeScript code.
+
+The package also provide a code written in TypeScript/JavaScript to parse and traverse the returned abstract syntax tree (AST) with Node.JS. You can use the provided type information and type guards to traverse the tree more easily.
 
 It is essentially just TypeScript-as-a-data, I didn't invent any syntax or parser. Thanks to `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) the script file could double as a data storage. TypeScript is a language that is fun and fluid to model and link up relationship of various tokens you had typed. I would like to use it in more than its original programming purpose.
 
@@ -33,6 +35,8 @@ We "borrow" the TypeScript language server to help us write an easy to maintain 
 Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
 
 Still the parsing is probably quite heavier than others that I would **not recommend** Resource Script for realtime application. `tsc` is not fast, as [discussed by the Deno collaborators](https://github.com/denoland/deno/issues/5432). Resource Script would be a good fit for data that is quite "cold" that you want to put more emphasis to editing experience (especially if the programmers are the editor). It can then be pre-processed into more machine friendly data ahead of time. This also make it very difficult to write an importer code that generates Resource Script. (As opposed to various "to JSON" tools available everywhere.) Making Resource Script quite one-way. You should understand all these weaknesses before using it.
+
+Also high dependency on `typescript` package/language to parse makes it unlikely that one can write a parser from scratch to use it in other environment that is not Node.JS. (I wish we have native Deno TypeScript lexer!)
 
 ## Features
 
