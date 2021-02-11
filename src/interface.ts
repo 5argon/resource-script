@@ -55,14 +55,14 @@ export interface FunctionTokenParam {
 	type: FunctionTokenParamType
 }
 
-export type FunctionTokenParamType = 'string' | 'number' | 'enum'
+export type FunctionTokenParamType = 'string' | 'number' | 'date' | 'boolean' | 'enum'
 
 export interface Params {
 	text: string
 	type: ParamType
 }
 
-export type ParamType = 'string' | 'number' | 'date'
+export type ParamType = 'string' | 'number' | 'date' | 'boolean' | 'enum'
 
 export interface BaseNode {
 	comment: string | undefined
