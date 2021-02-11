@@ -1,68 +1,9 @@
 /**
  * `Ast` is also counted as a `Group` so imports can be joined into the current tree.
  */
-export type Ast = Group
+export type Ast = Group & BaseNode
 
-export type TreeItem = Group | Text | TextParams | Numeric | TextArray | NumericArray
-
-/**
- * Nesting into the same type.
- */
-export interface Group extends BaseNode {
-	nodes: TreeItem[]
-}
-
-export interface Text extends BaseNode {
-	text: string
-}
-
-export interface Numeric extends BaseNode {
-	value: number
-}
-
-export interface TextArray extends BaseNode {
-	texts: string[]
-}
-
-export interface NumericArray extends BaseNode {
-	values: number[]
-}
-
-/**
- * When using arrow function that produces a template literal.
- */
-export interface TextParams extends BaseNode {
-	params: Params[]
-	/**
-	 * Lined up from left to right. Concatenate them to get the full string.
-	 */
-	tokens: Token[]
-}
-
-export type Token = TextToken | ParamToken | FunctionToken
-export interface TextToken {
-	text: string
-}
-export interface ParamToken {
-	paramName: string
-}
-export interface FunctionToken {
-	functionName: string
-	params: FunctionTokenParam[]
-}
-export interface FunctionTokenParam {
-	content: string | number
-	type: FunctionTokenParamType
-}
-
-export type FunctionTokenParamType = 'string' | 'number' | 'date' | 'boolean' | 'enum'
-
-export interface Params {
-	text: string
-	type: ParamType
-}
-
-export type ParamType = 'string' | 'number' | 'date' | 'boolean' | 'enum'
+export type ValueNode = Sup & BaseNode
 
 export interface BaseNode {
 	comment: string | undefined
@@ -71,3 +12,74 @@ export interface BaseNode {
 	 */
 	keys: string[]
 }
+
+export type Sup =
+	| Group
+	| Text
+	| TextArray
+	| TextTemplated
+	| Numeric
+	| NumericArray
+	| Bool
+	| BoolArray
+	| NamedTuple
+
+// -----
+
+/**
+ * Nesting into the same type.
+ */
+export interface Group {
+	children: ValueNode[]
+}
+
+export interface Text {
+	text: string
+}
+
+export interface TextArray {
+	texts: string[]
+}
+
+export interface Numeric {
+	value: number
+}
+
+export interface NumericArray {
+	values: number[]
+}
+
+export interface Bool {
+	bool: boolean
+}
+
+export interface BoolArray {
+	bools: boolean[]
+}
+
+export interface TextTemplated {
+	/**
+	 * Left side of arrow function.
+	 */
+	params: Params[]
+	/**
+	 * Right side of arrow function. From left to right, delimited by transition from normal string to ${}.
+	 * Everything not in `${}` considered as text.
+	 */
+	tokens: Token[]
+}
+
+export interface Params {
+	text: string
+	type: SupportedType
+}
+
+export type SupportedType = 'string' | 'number' | 'boolean' | 'enum' | { custom: string }
+
+export type Token = Sup
+
+export interface NamedTuple {
+	tupleName: string
+	params: NamedTupleParam[]
+}
+export type NamedTupleParam = Sup

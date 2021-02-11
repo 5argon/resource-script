@@ -36,7 +36,13 @@ const outer = {
 	/** comment 1.5 */
 	level15: [111, 222, 333],
 	/** comment 1.6 */
-	level16: 'level16-string',
+	level16: true,
+	/** comment 1.7 */
+	level17: [true, false, true],
+	/** comment 1.8 */
+	level18: LitFunc('string1', En.En1, 555),
+	/** comment 1.9 */
+	level19: En.En1,
 }
 
 export default outer

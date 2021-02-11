@@ -4,19 +4,27 @@ import {
 	Params,
 	Ast,
 	Group,
-	TreeItem,
+	ValueNode,
 	Text,
-	TextParams,
+	TextTemplated,
 	Token,
-	FunctionTokenParam,
 	Numeric,
 	TextArray,
 	NumericArray,
+	Bool,
+	BoolArray,
+	NamedTupleParam,
+	Sup,
+	NamedTuple,
 } from './interface'
 import path from 'path'
-import { first } from 'lodash'
 
 type ImportMap = { [k: string]: string }
+
+export function processString(fileContent: string): Ast {
+	const sf = ts.createSourceFile('dummy.ts', fileContent, ts.ScriptTarget.ES2020)
+	return process([], 0, sf, '')
+}
 
 /**
  * Called on the first entry and also when traversing into new imports.
@@ -27,13 +35,16 @@ export function processFile(filePath: string, parents: string[], depth: number):
 	if (sf === undefined) {
 		throw new Error('File not found at ' + filePath)
 	}
+	const dir = path.dirname(filePath)
+	return process(parents, depth, sf, dir)
+}
 
+export function process(parents: string[], depth: number, sf: ts.SourceFile, dir: string): Ast {
 	let comment: string | undefined = undefined
 	let name: string = ''
-	let nodes: TreeItem[] = []
+	let nodes: ValueNode[] = []
 	let im: ImportMap = {}
 	let newParent: string[] = [...parents]
-	const dir = path.dirname(filePath)
 
 	ts.forEachChild(sf, (node) => {
 		if (ts.isImportDeclaration(node)) {
@@ -62,17 +73,10 @@ export function processFile(filePath: string, parents: string[], depth: number):
 		// Silently pass all other top level declarations.
 		// User can declare other helpers creatively.
 	})
-	const ast: Ast = { nodes: nodes, comment: comment, keys: newParent }
+	const ast: Ast = { children: nodes, comment: comment, keys: newParent }
 	return ast
 }
 
-/**
- * Main loop that supports 4 kinds of `PropertyAssignment` :
- * - object (nesting)
- * - identifier (imports)
- * - string
- * - arrow function
- */
 function propAss(
 	c: ts.PropertyAssignment,
 	parents: string[],
@@ -80,173 +84,204 @@ function propAss(
 	im: ImportMap,
 	currentDirectory: string,
 	currentDepth: number,
-): TreeItem {
+): ValueNode {
 	const newParents = [...parents]
 	const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
 	const comment = getComment(c, sf)
 	newParents.push(name)
 	const initializer = c.initializer
-	if (ts.isObjectLiteralExpression(initializer)) {
-		const nodes = processObjectLiteral(
-			initializer,
-			newParents,
-			sf,
-			im,
-			currentDirectory,
-			currentDepth,
-		)
+	const sup = processExpression(
+		initializer,
+		newParents,
+		sf,
+		im,
+		currentDirectory,
+		currentDepth,
+		true,
+	)
+	return { ...sup, comment: comment, keys: newParents }
+}
+
+function processExpression(
+	exp: ts.Expression,
+	parents: string[],
+	sf: ts.SourceFile,
+	im: ImportMap,
+	dir: string,
+	depth: number,
+	identifierAsImports: boolean,
+): Sup {
+	if (ts.isObjectLiteralExpression(exp)) {
+		const nodes = processObjectLiteral(exp, parents, sf, im, dir, depth)
 		const ret: Group = {
-			comment: comment,
-			nodes: nodes,
-			keys: newParents,
+			children: nodes,
 		}
 		return ret
 	}
-	if (ts.isIdentifier(initializer)) {
-		const importName = initializer.text
-		if (importName in im) {
-			const p = path.join(currentDirectory, im[importName] + '.ts')
-			const ast = processFile(p, newParents, currentDepth + 1)
-			if (ast !== null) {
-				const ret: Group = {
-					comment: comment,
-					keys: newParents,
-					nodes: ast.nodes,
+	if (ts.isIdentifier(exp)) {
+		const identName = exp.text
+		if (identifierAsImports) {
+			if (identName in im) {
+				const p = path.join(dir, im[identName] + '.ts')
+				const ast = processFile(p, parents, depth + 1)
+				if (ast !== null) {
+					const ret: Group = {
+						children: ast.children,
+					}
+					return ret
+				} else {
+					throw new Error('Failed resolving to path ' + p)
 				}
-				return ret
-			} else {
-				throw new Error('Failed resolving to path ' + p)
 			}
+		} else {
+			const ret: Text = {
+				text: identName,
+			}
+			return ret
 		}
 	}
-	if (ts.isStringLiteral(initializer)) {
+	if (ts.isStringLiteral(exp)) {
 		const ret: Text = {
-			comment: comment,
-			keys: newParents,
-			text: initializer.text,
+			text: exp.text,
 		}
 		return ret
 	}
-	if (ts.isNumericLiteral(initializer)) {
+	if (ts.isNumericLiteral(exp)) {
 		const ret: Numeric = {
-			comment: comment,
-			keys: newParents,
-			value: parseInt(initializer.text, 10),
+			value: parseInt(exp.text, 10),
 		}
 		return ret
 	}
-	if (ts.isArrayLiteralExpression(initializer)) {
-		if (initializer.elements.length === 0) {
+	if (exp.kind === ts.SyntaxKind.TrueKeyword) {
+		const ret: Bool = {
+			bool: true,
+		}
+		return ret
+	}
+	if (exp.kind === ts.SyntaxKind.FalseKeyword) {
+		const ret: Bool = {
+			bool: false,
+		}
+		return ret
+	}
+	if (ts.isArrayLiteralExpression(exp)) {
+		if (exp.elements.length === 0) {
 			throw new Error('Array value must have at least 1 element.')
 		}
-		const firstElement = initializer.elements[0]
+		const firstElement = exp.elements[0]
 		if (ts.isStringLiteral(firstElement)) {
 			const collect: string[] = []
-			initializer.elements.forEach((x) => {
+			exp.elements.forEach((x) => {
 				if (ts.isStringLiteral(x)) {
 					collect.push(x.text)
 				} else {
-					throw new Error('Array value must be either all strings, or all numbers.')
+					throw new Error('String array must be entirely of the same type.')
 				}
 			})
 			const ret: TextArray = {
-				comment: comment,
-				keys: newParents,
 				texts: collect,
 			}
 			return ret
 		} else if (ts.isNumericLiteral(firstElement)) {
 			const collect: number[] = []
-			initializer.elements.forEach((x) => {
+			exp.elements.forEach((x) => {
 				if (ts.isNumericLiteral(x)) {
 					collect.push(parseInt(x.text, 10))
 				} else {
-					throw new Error('Array value must be either all strings, or all numbers.')
+					throw new Error('Number array must be entirely of the same type.')
 				}
 			})
 			const ret: NumericArray = {
-				comment: comment,
-				keys: newParents,
 				values: collect,
 			}
 			return ret
+		} else if (
+			firstElement.kind === ts.SyntaxKind.TrueKeyword ||
+			firstElement.kind === ts.SyntaxKind.FalseKeyword
+		) {
+			const collect: boolean[] = []
+			exp.elements.forEach((x) => {
+				if (firstElement.kind === ts.SyntaxKind.TrueKeyword) {
+					collect.push(true)
+				} else if (firstElement.kind === ts.SyntaxKind.FalseKeyword) {
+					collect.push(false)
+				} else {
+					throw new Error('Boolean array must be entirely of the same type.')
+				}
+			})
+			const ret: BoolArray = {
+				bools: collect,
+			}
+			return ret
 		} else {
-			throw new Error('Array value must be either all strings, or all numbers.')
+			throw new Error('Array value must be all strings, numbers, or booleans (same type).')
 		}
 	}
-	if (ts.isArrowFunction(initializer)) {
-		const args: Params[] = initializer.parameters.map<Params>((x) => {
+	// Arrow function as templated string
+	if (ts.isArrowFunction(exp)) {
+		const args: Params[] = exp.parameters.map<Params>((x) => {
 			return parseArrowFunctionParams(x)
 		})
-
-		const body = initializer.body
+		const body = exp.body
 		const tokens: Token[] = []
 		if (ts.isTemplateExpression(body)) {
-			tokens.push(...processTemplateExpression(body))
+			tokens.push(...processTemplateExpression(body, parents, sf, im, dir, depth))
 		}
-		const ret: TextParams = {
-			comment: comment,
-			keys: newParents,
+		const ret: TextTemplated = {
 			params: args,
 			tokens: tokens,
 		}
 		return ret
 	}
+	// Enum as string
+	if (ts.isPropertyAccessExpression(exp)) {
+		const iden: string = ts.isIdentifier(exp.name)
+			? exp.name.text
+			: ts.isPrivateIdentifier(exp.name)
+			? exp.name.text
+			: ''
+		const ret: Text = {
+			text: iden,
+		}
+		return ret
+	}
+	// Function as tuples
+	if (ts.isCallExpression(exp)) {
+		const lhs = exp.expression
+		let funcName = ''
+		if (ts.isIdentifier(lhs)) {
+			funcName = lhs.text
+		}
+		const ffp = exp.arguments.map<NamedTupleParam>((x) => {
+			return processExpression(exp, parents, sf, im, dir, depth, false)
+		})
+		const ret: NamedTuple = {
+			tupleName: funcName,
+			params: ffp,
+		}
+		return ret
+	}
 	throw new Error(
-		"The right side of object's key must be either : object (nesting), string literal, identifier (imports), arrow function.",
+		"The right side of object's key must be one of these : string, string array, number, number array, boolean, boolean array, function (tuples), arrow function (templated string), object (nesting), identifier (imports). Error occurs at key : " +
+			parents.join('-'),
 	)
 }
 
-/**
- * Turn template expression into full string.
- * `abc ${de} fgh` -> "abc {de} fgh"
- * If function call found, supports 3 kinds of args : identifier, enums, number.
- */
-function processTemplateExpression(t: ts.TemplateExpression): Token[] {
+function processTemplateExpression(
+	t: ts.TemplateExpression,
+	parents: string[],
+	sf: ts.SourceFile,
+	im: ImportMap,
+	dir: string,
+	depth: number,
+): Token[] {
 	const collect: Token[] = []
 	if (t.head.text !== '') {
 		collect.push({ text: t.head.text })
 	}
 	t.templateSpans.forEach((x) => {
-		if (ts.isIdentifier(x.expression)) {
-			collect.push({ paramName: x.expression.text })
-		}
-		if (ts.isCallExpression(x.expression)) {
-			const lhs = x.expression.expression
-			let funcName = ''
-			if (ts.isIdentifier(lhs)) {
-				funcName = lhs.text
-			}
-			const ffp = x.expression.arguments.map<FunctionTokenParam>((x) => {
-				if (ts.isIdentifier(x)) {
-					return {
-						content: x.text,
-						type: 'string',
-					}
-				}
-				if (ts.isPropertyAccessExpression(x)) {
-					const iden: string = ts.isIdentifier(x.name)
-						? x.name.text
-						: ts.isPrivateIdentifier(x.name)
-						? x.name.text
-						: ''
-					return {
-						content: iden,
-						type: 'enum',
-					}
-				}
-				if (ts.isNumericLiteral(x)) {
-					return {
-						content: parseInt(x.text, 10),
-						type: 'number',
-					}
-				}
-				throw new Error(
-					'When using functions inside template literal, its arguments must be either : identifier, enums, or number.',
-				)
-			})
-			collect.push({ functionName: funcName, params: ffp })
-		}
+		const sup = processExpression(x.expression, parents, sf, im, dir, depth, false)
+		collect.push(sup)
 		// The remaining string of this span
 		if (x.literal.text !== '') {
 			collect.push({ text: x.literal.text })
@@ -265,14 +300,10 @@ function parseArrowFunctionParams(x: ts.ParameterDeclaration): Params {
 		if (!t) {
 			throw new Error("Must define a type on the arrow function's parameters.")
 		}
-		if (
-			ts.isTypeReferenceNode(t) &&
-			ts.isIdentifier(t.typeName) &&
-			t.typeName.text === 'Date'
-		) {
+		if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) {
 			const par: Params = {
 				text: name,
-				type: 'date',
+				type: { custom: t.typeName.text },
 			}
 			return par
 		}
@@ -291,9 +322,16 @@ function parseArrowFunctionParams(x: ts.ParameterDeclaration): Params {
 				}
 				return par
 			}
+			case ts.SyntaxKind.BooleanKeyword: {
+				const par: Params = {
+					text: name,
+					type: 'boolean',
+				}
+				return par
+			}
 			default: {
 				throw new Error(
-					"Arrow function's parameter must be of type : string, number, or Date.",
+					"Arrow function's parameter must be of type : string, number, boolean, or a single type reference.",
 				)
 			}
 		}
@@ -312,8 +350,8 @@ function processObjectLiteral(
 	im: ImportMap,
 	currentDirectory: string,
 	currentDepth: number,
-): TreeItem[] {
-	let nodes: TreeItem[] = []
+): ValueNode[] {
+	let nodes: ValueNode[] = []
 	c.properties.forEach((x) => {
 		if (ts.isPropertyAssignment(x)) {
 			const made = propAss(x, parents, sf, im, currentDirectory, currentDepth)
