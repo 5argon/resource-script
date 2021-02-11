@@ -1,3 +1,4 @@
+import { isString } from 'lodash'
 import {
 	Ast,
 	parseFile,
@@ -8,6 +9,8 @@ import {
 	isText,
 	isTextTemplated,
 	isNamedTuple,
+	isBool,
+	isBoolArray,
 } from '../src'
 function parseAst(): Ast {
 	const p = parseFile('./test/fixture/fixture.ts')
@@ -47,7 +50,7 @@ test('First inner', () => {
 	}
 })
 
-test('Inner object - string', () => {
+test('Text', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -67,7 +70,7 @@ test('Inner object - string', () => {
 	}
 })
 
-test('Inner object - numeric', () => {
+test('Numeric', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -81,7 +84,7 @@ test('Inner object - numeric', () => {
 	}
 })
 
-test('Inner object - string array', () => {
+test('Text Array', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -95,7 +98,7 @@ test('Inner object - string array', () => {
 	}
 })
 
-test('Inner object - numeric array', () => {
+test('Number Array', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -109,7 +112,79 @@ test('Inner object - numeric array', () => {
 	}
 })
 
-test('Inner object - arrow function 1 arg', () => {
+test('Boolean', () => {
+	const ast = parseAst()
+	expect(ast.children).toHaveLength(9)
+
+	const n = ast.children[5]
+	if (isBool(n)) {
+		expect(n.comment).toBe('comment 1.6')
+		expect(n.keys).toEqual(['outer', 'level16'])
+		expect(n.bool).toEqual(true)
+	} else {
+		fail()
+	}
+})
+
+test('Boolean Array', () => {
+	const ast = parseAst()
+	expect(ast.children).toHaveLength(9)
+
+	const n = ast.children[6]
+	if (isBoolArray(n)) {
+		expect(n.comment).toBe('comment 1.7')
+		expect(n.keys).toEqual(['outer', 'level17'])
+		expect(n.bools).toEqual([true, false, true])
+	} else {
+		fail()
+	}
+})
+
+test('Named Tuple', () => {
+	const ast = parseAst()
+	expect(ast.children).toHaveLength(9)
+
+	const n = ast.children[7]
+	if (isNamedTuple(n)) {
+		expect(n.comment).toBe('comment 1.8')
+		expect(n.keys).toEqual(['outer', 'level18'])
+		expect(n.tupleName).toEqual('LitFunc')
+		expect(n.params).toHaveLength(3)
+		if (isText(n.params[0])) {
+			expect(n.params[0].text).toBe('string1')
+		} else {
+			fail()
+		}
+		if (isText(n.params[1])) {
+			expect(n.params[1].text).toBe('En1')
+		} else {
+			fail()
+		}
+		if (isNumeric(n.params[2])) {
+			expect(n.params[2].value).toBe(555)
+		} else {
+			fail()
+		}
+	} else {
+		fail()
+	}
+})
+
+test('Enum as Text', () => {
+	const ast = parseAst()
+	expect(ast.children).toHaveLength(9)
+
+	const n = ast.children[8]
+	if (isText(n)) {
+		expect(n.comment).toBe('comment 1.9')
+		expect(n.keys).toEqual(['outer', 'level19'])
+		expect(n.text).toEqual('En1')
+	} else {
+		fail()
+	}
+})
+
+test('Arrow function 1 arg', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -140,7 +215,7 @@ test('Inner object - arrow function 1 arg', () => {
 	}
 })
 
-test('Inner object - arrow function 2 args', () => {
+test('Arrow function 2 args', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -181,7 +256,7 @@ test('Inner object - arrow function 2 args', () => {
 	}
 })
 
-test('Inner object - arrow function with literal function', () => {
+test('Arrow function with literal function', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 
@@ -256,7 +331,7 @@ test('Inner object - arrow function with literal function', () => {
 	}
 })
 
-test('Inner object - imports', () => {
+test('Imports', () => {
 	const ast = parseAst()
 	expect(ast.children).toHaveLength(9)
 

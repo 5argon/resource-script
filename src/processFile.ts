@@ -201,9 +201,9 @@ function processExpression(
 		) {
 			const collect: boolean[] = []
 			exp.elements.forEach((x) => {
-				if (firstElement.kind === ts.SyntaxKind.TrueKeyword) {
+				if (x.kind === ts.SyntaxKind.TrueKeyword) {
 					collect.push(true)
-				} else if (firstElement.kind === ts.SyntaxKind.FalseKeyword) {
+				} else if (x.kind === ts.SyntaxKind.FalseKeyword) {
 					collect.push(false)
 				} else {
 					throw new Error('Boolean array must be entirely of the same type.')
