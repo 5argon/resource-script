@@ -14,6 +14,13 @@ import {
 type JSON = { [k: string]: any }
 
 /**
+ * - `'object'` : Only transfer comments over the object to `"comment"` JSON key.
+ * - `'deep'` : Also make comment on any non-object keys to turns the value to be `{ comment: ___, value: ___ }` instead to make room for storing the comment. This change the shape of data significantly for fields that has comment.
+ * - `'forced-deep'` : Same as `'deep'` but even fields without comments are forced to have `{ comment: "", value: ___}`. (Empty string comment.)
+ */
+type CommentMode = 'object' | 'deep' | 'forced-deep'
+
+/**
  * Simple adaptor to `JSON.stringify`.
  *
  * If `enableComment`, adds `"comment"` field **inside** the JSON object for every comment
@@ -23,8 +30,8 @@ type JSON = { [k: string]: any }
  *
  * (Beware of collisions with your own keys named "comment")
  */
-export function astToJSON(ast: Ast, enableComment?: boolean): string {
-	const jsObject = processChildren(ast.children, enableComment)
+export function astToJSON(ast: Ast, commentMode?: CommentMode): string {
+	const jsObject = processChildren(ast.children, commentMode)
 	return JSON.stringify(jsObject, null, 2)
 
 	function realKey(k: string[]) {
@@ -62,13 +69,13 @@ export function astToJSON(ast: Ast, enableComment?: boolean): string {
 		return ''
 	}
 
-	function processChildren(v: ValueNode[], enableComment?: boolean): JSON {
+	function processChildren(v: ValueNode[], commentMode?: CommentMode): JSON {
 		const ob: JSON = {}
 		v.forEach((x) => {
 			const k = realKey(x.keys)
 			if (isGroup(x)) {
-				const result = processChildren(x.children, enableComment)
-				if (enableComment && x.comment !== undefined) {
+				const result = processChildren(x.children, commentMode)
+				if (commentMode !== undefined && x.comment !== undefined) {
 					result['comment'] = x.comment
 				}
 				ob[k] = result
@@ -110,6 +117,13 @@ export function astToJSON(ast: Ast, enableComment?: boolean): string {
 					.map<string>((x) => valueToString(x))
 					.join(', ')
 				ob[k] = x.tupleName + '(' + concatParams + ')'
+			}
+			if (
+				!isGroup(x) &&
+				((commentMode === 'deep' && x.comment !== undefined) ||
+					commentMode === 'forced-deep')
+			) {
+				ob[k] = { value: ob[k], comment: x.comment }
 			}
 		})
 		return ob
