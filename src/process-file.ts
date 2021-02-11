@@ -22,7 +22,7 @@ import path from 'path'
 type ImportMap = { [k: string]: string }
 
 export function processString(fileContent: string): Ast {
-	const sf = ts.createSourceFile('dummy.ts', fileContent, ts.ScriptTarget.ES2020)
+	const sf = ts.createSourceFile('dummy.rs.ts', fileContent, ts.ScriptTarget.ES2020)
 	return process([], 0, sf, '')
 }
 
@@ -122,7 +122,7 @@ function processExpression(
 		const identName = exp.text
 		if (identifierAsImports) {
 			if (identName in im && dir !== '') {
-				const p = path.join(dir, im[identName] + '.ts')
+				const p = path.join(dir, im[identName] + '.rs.ts')
 				const ast = processFile(p, parents, depth + 1)
 				if (ast !== null) {
 					const ret: Group = {

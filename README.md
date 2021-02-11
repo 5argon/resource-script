@@ -231,7 +231,7 @@ This make it possible to use it as a "file name" metadata that is built into the
 ## Conventions
 
 -   Many TypeScript features will have no effect on the parser provided or even throws error, but there is no editor plugin or anything that treats them as an error. Please avoid doing that on your own.
--   Name the file extension as `.rs.ts` to make it clear that this is not actually a code, yet still receive syntax highlighting and other toolings from TypeScript.
+-   Name the file extension as `.rs.ts` to make it clear that this is not actually a code, yet still receive syntax highlighting and other toolings from TypeScript. This is important when you use `import` because the import path (which has no extension) will be suffixed with `.rs.ts` to try to find the file. (PR welcome to allow flexible resolution to `.ts`...)
 
 ## Parsing into an Abstract Syntax Tree (AST)
 
