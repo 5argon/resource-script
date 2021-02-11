@@ -1,5 +1,5 @@
 import { Ast } from './interface'
-import { processFile, processString } from './processFile'
+import { processFile, processString } from './process-file'
 
 /**
  * Throw if the file is not found or malformed.
