@@ -14,7 +14,7 @@ import {
 	Bool,
 	BoolArray,
 	NamedTupleParam,
-	Sup,
+	Value,
 	NamedTuple,
 } from './interface'
 import path from 'path'
@@ -111,7 +111,7 @@ function processExpression(
 	dir: string,
 	depth: number,
 	identifierAsImports: boolean,
-): Sup {
+): Value {
 	if (ts.isObjectLiteralExpression(exp)) {
 		const nodes = processObjectLiteral(exp, parents, sf, im, dir, depth)
 		const ret: Group = {

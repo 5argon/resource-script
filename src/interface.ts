@@ -3,7 +3,7 @@
  */
 export type Ast = Group & BaseNode
 
-export type ValueNode = Sup & BaseNode
+export type ValueNode = Value & BaseNode
 
 export interface BaseNode {
 	comment: string | undefined
@@ -13,7 +13,10 @@ export interface BaseNode {
 	keys: string[]
 }
 
-export type Sup =
+/**
+ * Use type guards to differentiate these possible values.
+ */
+export type Value =
 	| Group
 	| Text
 	| TextArray
@@ -76,10 +79,10 @@ export interface Params {
 
 export type SupportedType = 'string' | 'number' | 'boolean' | 'enum' | { custom: string }
 
-export type Token = Sup
+export type Token = Value
 
 export interface NamedTuple {
 	tupleName: string
 	params: NamedTupleParam[]
 }
-export type NamedTupleParam = Sup
+export type NamedTupleParam = Value

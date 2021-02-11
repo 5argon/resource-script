@@ -9,8 +9,7 @@
 	"scripts": {
 		"watch": "tsc -b -w",
 		"build": "tsc -b",
-		"test": "jest",
-		"test-1": "jest -t \"Outer\""
+		"test": "jest"
 	},
 	"main": "dist/index.js",
 	"license": "MIT",
