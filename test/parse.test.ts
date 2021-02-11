@@ -1,4 +1,3 @@
-import { isString } from 'lodash'
 import {
 	Ast,
 	parseFile,
@@ -14,9 +13,6 @@ import {
 } from '../src'
 function parseAst(): Ast {
 	const p = parseFile('./test/fixture/fixture.ts')
-	if (p === undefined) {
-		fail('Parsing failed.')
-	}
 	return p
 }
 
@@ -211,13 +207,13 @@ test('Arrow function 1 arg', () => {
 		expect(i3.keys).toEqual(['outer', 'level11', 'level23'])
 		if (isTextTemplated(i3)) {
 			expect(i3.tokens).toHaveLength(2)
-			if (isText(i3.tokens[0])) {
+			if (typeof i3.tokens[0] !== 'string' && isText(i3.tokens[0])) {
 				expect(i3.tokens[0].text).toBe('firstArg')
 			} else {
 				fail()
 			}
-			if (isText(i3.tokens[1])) {
-				expect(i3.tokens[1].text).toBe(' span string 1')
+			if (typeof i3.tokens[1] === 'string') {
+				expect(i3.tokens[1]).toBe(' span string 1')
 			} else {
 				fail()
 			}
@@ -242,23 +238,23 @@ test('Arrow function 2 args', () => {
 		expect(i4.keys).toEqual(['outer', 'level11', 'level24'])
 		if (isTextTemplated(i4)) {
 			expect(i4.tokens).toHaveLength(4)
-			if (isText(i4.tokens[0])) {
+			if (typeof i4.tokens[0] !== 'string' && isText(i4.tokens[0])) {
 				expect(i4.tokens[0].text).toBe('firstArg')
 			} else {
 				fail()
 			}
-			if (isText(i4.tokens[1])) {
-				expect(i4.tokens[1].text).toBe(' span string 1 ')
+			if (typeof i4.tokens[1] === 'string') {
+				expect(i4.tokens[1]).toBe(' span string 1 ')
 			} else {
 				fail()
 			}
-			if (isText(i4.tokens[2])) {
+			if (typeof i4.tokens[2] !== 'string' && isText(i4.tokens[2])) {
 				expect(i4.tokens[2].text).toBe('secondArg')
 			} else {
 				fail()
 			}
-			if (isText(i4.tokens[3])) {
-				expect(i4.tokens[3].text).toBe(' span string 2')
+			if (typeof i4.tokens[3] === 'string') {
+				expect(i4.tokens[3]).toBe(' span string 2')
 			} else {
 				fail()
 			}
@@ -283,12 +279,12 @@ test('Arrow function with literal function', () => {
 		expect(i5.keys).toEqual(['outer', 'level11', 'level25'])
 		if (isTextTemplated(i5)) {
 			expect(i5.tokens).toHaveLength(4)
-			if (isText(i5.tokens[0])) {
-				expect(i5.tokens[0].text).toBe('span string 1 ')
+			if (typeof i5.tokens[0] === 'string') {
+				expect(i5.tokens[0]).toBe('span string 1 ')
 			} else {
 				fail()
 			}
-			if (isNamedTuple(i5.tokens[1])) {
+			if (typeof i5.tokens[1] !== 'string' && isNamedTuple(i5.tokens[1])) {
 				expect(i5.tokens[1].tupleName).toBe('LitFunc')
 				expect(i5.tokens[1].params).toHaveLength(3)
 
@@ -310,12 +306,12 @@ test('Arrow function with literal function', () => {
 			} else {
 				fail()
 			}
-			if (isText(i5.tokens[2])) {
-				expect(i5.tokens[2].text).toBe(' span string 2 ')
+			if (typeof i5.tokens[2] === 'string') {
+				expect(i5.tokens[2]).toBe(' span string 2 ')
 			} else {
 				fail()
 			}
-			if (isNamedTuple(i5.tokens[3])) {
+			if (typeof i5.tokens[3] !== 'string' && isNamedTuple(i5.tokens[3])) {
 				expect(i5.tokens[3].tupleName).toBe('LitFunc')
 				expect(i5.tokens[3].params).toHaveLength(3)
 

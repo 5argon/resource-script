@@ -18,7 +18,6 @@ import {
 	NamedTuple,
 } from './interface'
 import path from 'path'
-import { first } from 'lodash'
 
 type ImportMap = { [k: string]: string }
 

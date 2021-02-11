@@ -87,8 +87,11 @@ export interface CustomType {
 }
 
 /**
- * Text token means anything not in the `${}`.
- * But if an identifier is in `${}` then it is a text anyways.
+ * Token means each item in the template string.
+ * This ```Hello ${name} world``` contains 3 tokens : `Hello `, `name`, ` world`
+ *
+ * Text token means anything not in the `${}` and thus a simple `string`.
+ * But if an identifier is in `${}` then it is a text anyways but bundled in `Text`.
  */
 export type Token = TextToken | Value
 export type TextToken = string
