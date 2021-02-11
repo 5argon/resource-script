@@ -209,6 +209,21 @@ Imports can be used by typing the "identifier" on the right side of the key. Rem
 
 WARNING : Please avoid import cycle, it **will** cause infinite loop. (PR welcome!)
 
+### Named outermost object
+
+```ts
+/** Contains names */
+const names = {
+	me: '5argon',
+	myMom: 'Not gonna tell you',
+}
+export default names
+```
+
+Alluding to JSON starting with `{ }` always, Resource Script also always start with "declaration" but is named. The parser can get both the name and comment metadata attached to this declaration as the first item in the AST.
+
+This make it possible to use it as a "file name" metadata that is built into the data. You can load a bunch of Resource Script without caring about file names, because they are embeded inside.
+
 ## Conventions
 
 -   Many TypeScript features will have no effect on the parser provided or even throws error, but there is no editor plugin or anything that treats them as an error. Please avoid doing that on your own.
