@@ -1,60 +1,60 @@
 {
-	"name": "resource-script",
-	"description": "Resource Script is a programmer-centric data storage format that looks like TypeScript code.",
-	"keywords": [
-		"typescript",
-		"resource",
-		"ast"
-	],
-	"homepage": "http://github.com/5argon/resource-script",
-	"bugs": {
-		"url": "https://github.com/5argon/resource-script/issues",
-		"email": "pyasry@gmail.com"
-	},
-	"repository": {
-		"type": "git",
-		"url": "github:5argon/resource-script"
-	},
-	"version": "1.0.0",
-	"author": {
-		"name": "Sirawat Pitaksarit",
-		"email": "pyasry@gmail.com",
-		"url": "https://5argon.info"
-	},
-	"bin": "./dist/bin-commands.js",
-	"scripts": {
-		"watch": "tsc -b -w",
-		"build": "tsc -b",
-		"test": "jest",
-		"resource-script": "node ./dist/bin-commands.js"
-	},
-	"main": "dist/index.js",
-	"types": "dist/index.d.js",
-	"license": "MIT",
-	"files": [
-		"README.md",
-		"dist"
-	],
-	"dependencies": {
-		"tsutils": "^3.20.0",
-		"typescript": "^4.1.4",
-		"yargs": "^16.2.0"
-	},
-	"devDependencies": {
-		"@types/jest": "^26.0.20",
-		"@types/node": "^14.14.25",
-		"@types/yargs": "^16.0.0",
-		"@typescript-eslint/eslint-plugin": "^4.15.0",
-		"@typescript-eslint/parser": "^4.15.0",
-		"@yarnpkg/pnpify": "^2.4.0",
-		"eslint": "^7.19.0",
-		"eslint-config-prettier": "^7.2.0",
-		"eslint-import-resolver-node": "^0.3.4",
-		"eslint-plugin-import": "^2.22.1",
-		"eslint-plugin-prettier": "^3.3.1",
-		"eslint-plugin-simple-import-sort": "^7.0.0",
-		"jest": "^26.6.3",
-		"prettier": "^2.2.1",
-		"ts-jest": "^26.5.1"
-	}
+  "name": "resource-script",
+  "description": "Resource Script is a programmer-centric data storage format that looks like TypeScript code.",
+  "keywords": [
+    "typescript",
+    "resource",
+    "ast"
+  ],
+  "homepage": "http://github.com/5argon/resource-script",
+  "bugs": {
+    "url": "https://github.com/5argon/resource-script/issues",
+    "email": "pyasry@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:5argon/resource-script"
+  },
+  "version": "1.0.0",
+  "author": {
+    "name": "Sirawat Pitaksarit",
+    "email": "pyasry@gmail.com",
+    "url": "https://5argon.info"
+  },
+  "bin": "./dist/bin-commands.js",
+  "scripts": {
+    "watch": "tsc -b -w",
+    "build": "tsc -b",
+    "test": "jest",
+    "resource-script": "node ./dist/bin-commands.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
+  "license": "MIT",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "dependencies": {
+    "tsutils": "^3.20.0",
+    "typescript": "^4.1.4",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.25",
+    "@types/yargs": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "@yarnpkg/pnpify": "^2.4.0",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.1"
+  }
 }
