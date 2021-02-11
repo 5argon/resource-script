@@ -166,7 +166,7 @@ export default days
 
 Here we essentially hack TypeScript a bit by declaring a **useless function** just so we can use it.
 
-The parser will be able to get `"pair"` along with each element, which supports the same data type as when declaring a simple key with values on the right side.
+The parser will be able to get `"pair"` along with each element, which supports the same data type as in other places. Note that the type on the useless function are not accessible by the parser, but helps you put in the right thing into each slot of the tuple.
 
 It is also possible to put a tuple inside the template string. It can model something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) in a more organized manner and get better syntax highlighting.
 
@@ -203,7 +203,7 @@ const infoModule = {
 export default infoModule
 ```
 
-Each file is a TypeScript module with a single `default` export. You can continue the hierarchy in an another Resource Script file. The parsed result will count as if the term has common parent. This make the resource file scalable, where in some other solutions each file is on its own.
+Each file is a TypeScript module with a single `default` export. You can continue the hierarchy in an another Resource Script file. The parsed result will count as if the extended object tree has continued parents. This make the resource file scalable, where in some other solutions each file is on its own.
 
 Imports can be used by typing the "identifier" on the right side of the key. Remember that when identifier is used inside Named Tuple args, they are treated as a regular string. The only place that imports can be used is directly on the right side of the key.
 
