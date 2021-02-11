@@ -1,10 +1,22 @@
 # resource-script
 
+```ts
+const valueStorage = {
+	string: 'Hello',
+	num: 555,
+	stringArray: ['Hello', 'World'],
+	numArray: [123, 456, 789],
+	isIt: true,
+	flags: [true, true, false],
+}
+export default valueStorage
+```
+
 Resource Script is a programmer-centric data storage format that **looks like** TypeScript code. The package also provide a code written in TypeScript/JavaScript to parse and traverse the returned abstract syntax tree (AST) with Node.JS. You can use the provided type information and type guards to traverse the tree more easily.
 
 It is essentially just TypeScript-as-a-data, I didn't invent any syntax or parser. Thanks to `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) the script file could double as a data storage. TypeScript is a language that is fun and fluid to model and link up relationship of various tokens you had typed. I would like to use it in more than its original programming purpose.
 
-Resource files can prevent hard-coding strings into your code and help with localization by simply swapping the file. For example .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in authoring, features, and flexibility.
+Some exmaple of "resource file" are .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in editing experience, features, flexibility, and how difficult for machine to parse.
 
 ## Features
 
@@ -12,9 +24,11 @@ It may seems strange at first to use code as a resource. This section describes 
 
 If you go read the [definition and motivation of JSON](https://www.json.org/), this Resource Script is following the same pattern (is based on a programming language) except you replace JavaScript subset thing with TypeScript.
 
-Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**. Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
+Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**.
 
-The object keys acts as the string resource's hierarchical keys. The arrow function parameter names and type notations which used to not really exist in real TypeScript, here they are interpreted meaningfully by the parser. Limitations of what is allowed as a defined name in TypeScript also applies as a side effect.
+Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
+
+Still the parsing is probably quite heavier than others that I would **not recommend** Resource Script for realtime application. Resource Script would be a good fit for data that is quite "cold" that you want to put more emphasis to editing experience (especially if the programmers are the editor). It can then be pre-processed into more machine friendly data ahead of time.
 
 We "borrow" the TypeScript language server to help us write an easy to maintain resource file. CSV is no longer the only format with a "dedicated editor". With Resource Script, your code editor is the ideal editor. We gain an entire ecosystem of editor plugins used to work with TypeScript as well when our resource is exactly TypeScript like this. (e.g. `eslint`, `prettier`, etc.)
 
@@ -68,7 +82,7 @@ export default hierarchicalExample
 
 String keys used to access the resource are hierarchical, similar to JSON. Unlike JSON, you don't need double quotes on the keys. Some other format like CSV may use `.` or `/` as a hierarchy to index into the data, but it is just an illusion as `a.x` and `a.y` are 2 different keys with no relationship.
 
-XML-style resource file can also design a hierarchy, but personally I would love to author with TypeScript-like syntax more.
+XML-style resource file can also design a hierarchy, but personally I would love to author with TypeScript-like syntax more as the key does not need to be repeated for closing tag.
 
 ```xml
 <Home>
@@ -115,9 +129,9 @@ const greetings = {
 export default greetings
 ```
 
-Instead of using surrounders like other solutions (e.g. `My name is {name}`), Resource Script uses an arrow function and JavaScript template literal dollar sign syntax instead (e.g. `` (name: string) => `My name is ${name}`  ``). Why would we want to do this now that we have to type `name` 2 times, dollar sign adds noise, and also need to type the arrow?
+Instead of using surrounders like other solutions (e.g. `My name is {name}`), Resource Script uses an arrow function and JavaScript template literal dollar sign syntax instead. Why would we want to do this now that we have to type `name` 2 times, dollar sign adds noise, and also need to type the arrow?
 
--   It is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a number.) Resource Script parser can get type information of any templating token that you can use at will.
+-   Each template variable is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a number.) Resource Script parser can get type information bound to each template variable by the colon `:` syntax as a string. Then it depends how you want to use them.
 -   Note that the type is not real, you are simply returned a string of that type. Supported types are `string`, `number`, `boolean`, and any type reference. You can define `type` and use that type so you get the string of that type's name in the parser.
 -   Syntax is highlighted, though in other templating solutions editor likely has good enough extension to highlight things in the surrounders. Note that if you use template placeholder in JSON on your own, it will not get highlighted as JSON only knows "string" and editor highlights all that as strings. So this is a JSON with template highlighting of sorts.
 -   Easier to see the list of parameters because they are collected on the left side of the arrow. It is impossible to mistype template literal on the right side either since it is defined as an argument token on the arrow function. So the "must type 2 times" is mostly mitigated by auto completion. In long sentence, it is quite useful to see what makes the string dynamic at a glance. (You can also still read it directly, though $ sign I agree is a bit distracting.)
@@ -194,7 +208,7 @@ WARNING : Please avoid import cycle, it **will** cause infinite loop. (PR welcom
 ## Conventions
 
 -   Many TypeScript features will have no effect on the parser provided or even throws error, but there is no editor plugin or anything that treats them as an error. Please avoid doing that on your own.
--   Name the file as `___.rs.ts` to make it clear that this is not actually a code.
+-   Name the file extension as `.rs.ts` to make it clear that this is not actually a code, yet still receive syntax highlighting and other toolings from TypeScript.
 
 ## Parsing into an Abstract Syntax Tree (AST)
 
@@ -215,3 +229,7 @@ export function parseString(s: string): Ast
 When traversing the returned `Ast` object in TypeScript, provided type guards will be useful. (This is similar pattern to the TypeScript's Compiler API.)
 
 I didn't write any documentation on the shape of the returned object yet but it should be fairly straightforward to learn from the `interface.ts` file. Type guards can also be learned from `type-guards.ts` file. Also of course the test file will show a usage from package consumer's perspective.
+
+## Related Projects
+
+Resource Script was created originally to author [Format.JS](https://formatjs.io/) localization terms more easily. Required Format.JS code that is required but verbose and difficult to maintain are generated from Resource Script instead. Resource Script can model [ICU Message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) in a way that not everything are baked into strings. See `resource-script-formatjs`.

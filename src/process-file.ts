@@ -122,7 +122,7 @@ function processExpression(
 	if (ts.isIdentifier(exp)) {
 		const identName = exp.text
 		if (identifierAsImports) {
-			if (identName in im) {
+			if (identName in im && dir !== '') {
 				const p = path.join(dir, im[identName] + '.ts')
 				const ast = processFile(p, parents, depth + 1)
 				if (ast !== null) {
