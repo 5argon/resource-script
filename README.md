@@ -262,4 +262,4 @@ With the parser to AST maybe the first thing you want to write on is to convert 
 
 ## Related Projects
 
-Resource Script was created originally to author [Format.JS](https://formatjs.io/) localization terms more easily. Required Format.JS code that is required but verbose and difficult to maintain are generated from Resource Script instead. Resource Script can model [ICU Message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) in a way that not everything are baked into strings. See [`resource-script-formatjs`](https://github.com/5argon/resource-script).
+Resource Script was created originally to author [Format.JS](https://formatjs.io/) localization terms more easily. Required Format.JS code that is required but verbose and difficult to maintain are generated from Resource Script instead. Resource Script can model [ICU Message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) in a way that not everything are baked into strings. See [`resource-script-formatjs`](https://github.com/5argon/resource-script-formatjs).
