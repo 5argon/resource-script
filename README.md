@@ -1,8 +1,8 @@
 # resource-script
 
-Resource Script is a programmer-centric data storage format, and a code written in TypeScript/JavaScript to parse it with Node.JS. After parsing, you get an abstract syntax tree (AST) as a JavaScript object. You can use the provided type information and type guards to traverse the tree more easily in TypeScript.
+Resource Script is a programmer-centric data storage format that **looks like** TypeScript code. The package also provide a code written in TypeScript/JavaScript to parse and traverse the returned abstract syntax tree (AST) with Node.JS. You can use the provided type information and type guards to traverse the tree more easily.
 
-It is essentially just TypeScript-as-a-data, I didn't invent any syntax or parser. Thanks to `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) the script file could double as a data storage.
+It is essentially just TypeScript-as-a-data, I didn't invent any syntax or parser. Thanks to `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) the script file could double as a data storage. TypeScript is a language that is fun and fluid to model and link up relationship of various tokens you had typed. I would like to use it in more than its original programming purpose.
 
 Resource files can prevent hard-coding strings into your code and help with localization by simply swapping the file. For example .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in authoring, features, and flexibility.
 
@@ -36,24 +36,24 @@ Key's name is on the left side using JavaScript object notation.
 
 When storing simple values directly, the parser supports `string`, `number` and `boolean`, along with an array of entirely that type. Array of mixed type is not supported.
 
-
 ### String symbol
 
 ```ts
-const valueStorage = {
-	string: 'Hello',
-	num: 555,
-	stringArray: ['Hello', 'World'],
-	numArray: [123, 456, 789],
-	isIt: true,
-	flags: [true, true, false],
+enum Mood {
+	Neutral,
+	Happy,
+	Sad,
 }
-export default valueStorage
+
+const moodEachDay = {
+	monday: Mood.Neutral,
+	tuesday: [Mood.Neutral, Mood.Sad, Mood.Sad],
+}
+export default moodEachDay
 ```
 
-Key's name is on the left side using JavaScript object notation.
+TypeScript `enum` can be used as an instanced string symbol. The `enum`'s type name does not matter and serve just to aid you in auto completion, and maybe later, mass rename them. You will get just the latter part in the parser. (`Neutral`, `Happy`, `Sad`)
 
-When storing simple values directly, the parser supports `string`, `number` and `boolean`, along with an array of entirely that type. Array of mixed type is not supported.
 ### Hierarchical keys
 
 ```ts
@@ -117,14 +117,15 @@ export default greetings
 
 Instead of using surrounders like other solutions (e.g. `My name is {name}`), Resource Script uses an arrow function and JavaScript template literal dollar sign syntax instead (e.g. `` (name: string) => `My name is ${name}`  ``). Why would we want to do this now that we have to type `name` 2 times, dollar sign adds noise, and also need to type the arrow?
 
--   It is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a number.) Resource Script parser can get type information of any templating token that you can use at will. Supported types are : `'string' | 'number' | 'date' | 'boolean' | 'enum'`.
--   Syntax is highlighted, though in other templating solutions editor likely has good enough extension to highlight things in the surrounders. Note that if you use template placeholder in JSON on your own, it will not get highlighted as JSON only knows "string" and editor highlights all that as strings.
--   Easier to see the list of parameters because they are collected on the leftmost. It is impossible to mistype template literal on the right side either since it is defined as an argument token on the arrow function. So the "must type 2 times" is mostly mitigated by auto completion. In long sentence, it is quite useful to see what makes the string dynamic at a glance. (You can also still read it directly, though $ sign I agree is a bit distracting.)
+-   It is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a number.) Resource Script parser can get type information of any templating token that you can use at will.
+-   Note that the type is not real, you are simply returned a string of that type. Supported types are `string`, `number`, `boolean`, and any type reference. You can define `type` and use that type so you get the string of that type's name in the parser.
+-   Syntax is highlighted, though in other templating solutions editor likely has good enough extension to highlight things in the surrounders. Note that if you use template placeholder in JSON on your own, it will not get highlighted as JSON only knows "string" and editor highlights all that as strings. So this is a JSON with template highlighting of sorts.
+-   Easier to see the list of parameters because they are collected on the left side of the arrow. It is impossible to mistype template literal on the right side either since it is defined as an argument token on the arrow function. So the "must type 2 times" is mostly mitigated by auto completion. In long sentence, it is quite useful to see what makes the string dynamic at a glance. (You can also still read it directly, though $ sign I agree is a bit distracting.)
 -   Using the template variable multiple times (though it is rare) will has syntax checking that they are all indeed the same "instance".
 
 ## Named tuples
 
-Resource Script can define a named, and typed tuples by borrowing function syntax from TypeScript.
+Resource Script can define a named, typed tuples. We borrow function syntax from TypeScript.
 
 ```ts
 enum Temp {
@@ -143,7 +144,7 @@ export default days
 
 Here we essentially hack TypeScript a bit by declaring a **useless function** just so we can use it.
 
-The parser will be able to get "pair" along with each element (string or number). As demonstrated, `enum` is also supported to act as a `string`. The parser will skip the enum type name (i.e. `Temp` here).
+The parser will be able to get `"pair"` along with each element, which supports the same data type as when declaring a simple key with values on the right side.
 
 It is also possible to put a tuple inside the template string. It can model something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) in a more organized manner and get better syntax highlighting.
 
@@ -157,7 +158,7 @@ const pluralizers = {
 export default pluralizers
 ```
 
-Supported types to use in the tuple are : `'string' | 'number' | 'boolean' | 'enum'`. When you use arrow function parameters in the tuple (like `n` in the example) it will be counted as `string` of that name. Remember that this is not an actual arrow function of TypeScript, we just borrowed the syntax. The function does not actually "work".
+When you use arrow function parameters ("identifier") in the tuple (like `n` in the example) it will be counted as `string` of that name as opposed to an import (explained in the next section). Remember that this is not an actual arrow function of TypeScript, we just borrowed the syntax. The function does not actually "work".
 
 ### Resource hierarchy spanning multiple files with imports
 
@@ -182,6 +183,8 @@ export default infoModule
 
 Each file is a TypeScript module with a single `default` export. You can continue the hierarchy in an another Resource Script file. The parsed result will count as if the term has common parent. This make the resource file scalable, where in some other solutions each file is on its own.
 
+Imports can be used by typing the "identifier" on the right side of the key. Remember that when identifier is used inside Named Tuple args, they are treated as a regular string. The only place that imports can be used is directly on the right side of the key.
+
 -   Since imports are real TypeScript tokens, you can also use "Go To Definition" in your editor to quickly jump to the target file and back. Giving you more incentive to split files because in other solutions you may not want to navigate on the browser too much.
 -   Similarly you can come back by using "Find All References". When there is only 1 reference which is usually the case, you can also do "Go To Definition" to jump back by most modern editors.
 -   Though not so useful, you can use imports in different place and the result will be as if they are different leaves. Hierarchical keys took care of any key duplication problems when you do this.
@@ -195,10 +198,18 @@ WARNING : Please avoid import cycle, it **will** cause infinite loop. (PR welcom
 
 ## Parsing into an Abstract Syntax Tree (AST)
 
-Resource file would not be of any use without a parser. The parser is essentially just using `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API). This is the only export from this package :
+Resource file would not be of any use without a parser. The parser is essentially just using `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API). You can either use a path to file or a string of content of that file.
 
 ```ts
-function parse(filePath: string): Ast
+/**
+ * Throw if the file is not found or malformed.
+ */
+export function parseFile(files: string): Ast
+
+/**
+ * Ignores any import statement.
+ */
+export function parseString(s: string): Ast
 ```
 
 When traversing the returned `Ast` object in TypeScript, provided type guards will be useful. (This is similar pattern to the TypeScript's Compiler API.)
