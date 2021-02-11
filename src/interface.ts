@@ -6,26 +6,26 @@ export type Ast = Group & BaseNode
 export type ValueNode = Value & BaseNode
 
 export interface BaseNode {
-	comment: string | undefined
-	/**
-	 * Collected hierarchical keys from root parent leading to this node.
-	 */
-	keys: string[]
+  comment: string | undefined
+  /**
+   * Collected hierarchical keys from root parent leading to this node.
+   */
+  keys: string[]
 }
 
 /**
  * Use type guards to differentiate these possible values.
  */
 export type Value =
-	| Group
-	| Text
-	| TextArray
-	| TextTemplated
-	| Numeric
-	| NumericArray
-	| Bool
-	| BoolArray
-	| NamedTuple
+  | Group
+  | Text
+  | TextArray
+  | TextTemplated
+  | Numeric
+  | NumericArray
+  | Bool
+  | BoolArray
+  | NamedTuple
 
 // -----
 
@@ -33,48 +33,48 @@ export type Value =
  * Nesting into the same type.
  */
 export interface Group {
-	children: ValueNode[]
+  children: ValueNode[]
 }
 
 export interface Text {
-	text: string
+  text: string
 }
 
 export interface TextArray {
-	texts: string[]
+  texts: string[]
 }
 
 export interface Numeric {
-	value: number
+  value: number
 }
 
 export interface NumericArray {
-	values: number[]
+  values: number[]
 }
 
 export interface Bool {
-	bool: boolean
+  bool: boolean
 }
 
 export interface BoolArray {
-	bools: boolean[]
+  bools: boolean[]
 }
 
 export interface TextTemplated {
-	/**
-	 * Left side of arrow function.
-	 */
-	params: Params[]
-	/**
-	 * Right side of arrow function. From left to right, delimited by transition from normal string to ${}.
-	 * Everything not in `${}` considered as text.
-	 */
-	tokens: TemplateSpan[]
+  /**
+   * Left side of arrow function.
+   */
+  params: Params[]
+  /**
+   * Right side of arrow function. From left to right, delimited by transition from normal string to ${}.
+   * Everything not in `${}` considered as text.
+   */
+  tokens: TemplateSpan[]
 }
 
 export interface Params {
-	text: string
-	type: SupportedType
+  text: string
+  type: SupportedType
 }
 
 /**
@@ -83,7 +83,7 @@ export interface Params {
 export type SupportedType = 'string' | 'number' | 'boolean' | CustomType
 
 export interface CustomType {
-	custom: string
+  custom: string
 }
 
 /**
@@ -97,7 +97,7 @@ export type TemplateSpan = TextSpan | Value
 export type TextSpan = string
 
 export interface NamedTuple {
-	tupleName: string
-	params: NamedTupleParam[]
+  tupleName: string
+  params: NamedTupleParam[]
 }
 export type NamedTupleParam = Value

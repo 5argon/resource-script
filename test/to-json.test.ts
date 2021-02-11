@@ -1,8 +1,8 @@
 import { Ast, parseFile, astToJSON } from '../src'
 
 function parseAst(): Ast {
-	const p = parseFile('./test/fixture/fixture.rs.ts')
-	return p
+  const p = parseFile('./test/fixture/fixture.rs.ts')
+  return p
 }
 
 const ans1 = `{
@@ -180,21 +180,21 @@ const ans3 = `{
 }`
 
 test('To JSON no comment', () => {
-	const json = astToJSON(parseAst())
-	expect(json).toBe(ans1)
+  const json = astToJSON(parseAst())
+  expect(json).toBe(ans1)
 })
 
 test('To JSON with comment (object)', () => {
-	const json = astToJSON(parseAst(), 'object')
-	expect(json).toBe(ans2)
+  const json = astToJSON(parseAst(), 'object')
+  expect(json).toBe(ans2)
 })
 
 test('To JSON with comment (deep)', () => {
-	const json = astToJSON(parseAst(), 'deep')
-	expect(json).toBe(ans3)
+  const json = astToJSON(parseAst(), 'deep')
+  expect(json).toBe(ans3)
 })
 
 test('To JSON with comment (forced-deep)', () => {
-	const json = astToJSON(parseAst(), 'forced-deep')
-	expect(json).toBe(ans3)
+  const json = astToJSON(parseAst(), 'forced-deep')
+  expect(json).toBe(ans3)
 })
