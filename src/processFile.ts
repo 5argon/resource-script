@@ -253,7 +253,7 @@ function processExpression(
 			funcName = lhs.text
 		}
 		const ffp = exp.arguments.map<NamedTupleParam>((x) => {
-			return processExpression(exp, parents, sf, im, dir, depth, false)
+			return processExpression(x, parents, sf, im, dir, depth, false)
 		})
 		const ret: NamedTuple = {
 			tupleName: funcName,

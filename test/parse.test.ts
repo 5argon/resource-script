@@ -21,12 +21,12 @@ test('Outer', () => {
 	const ast = parseAst()
 	expect(ast.keys).toEqual(['outer'])
 	expect(ast.comment).toBe('comment 0')
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 })
 
 test('First inner', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	expect(n0.keys).toEqual(['outer', 'level11'])
@@ -49,7 +49,7 @@ test('First inner', () => {
 
 test('Inner object - string', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	if (isGroup(n0)) {
@@ -69,7 +69,7 @@ test('Inner object - string', () => {
 
 test('Inner object - numeric', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n = ast.children[2]
 	if (isNumeric(n)) {
@@ -83,7 +83,7 @@ test('Inner object - numeric', () => {
 
 test('Inner object - string array', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n = ast.children[3]
 	if (isTextArray(n)) {
@@ -97,7 +97,7 @@ test('Inner object - string array', () => {
 
 test('Inner object - numeric array', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n = ast.children[4]
 	if (isNumericArray(n)) {
@@ -111,7 +111,7 @@ test('Inner object - numeric array', () => {
 
 test('Inner object - arrow function 1 arg', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -142,7 +142,7 @@ test('Inner object - arrow function 1 arg', () => {
 
 test('Inner object - arrow function 2 args', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -183,7 +183,7 @@ test('Inner object - arrow function 2 args', () => {
 
 test('Inner object - arrow function with literal function', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -258,7 +258,7 @@ test('Inner object - arrow function with literal function', () => {
 
 test('Inner object - imports', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(6)
+	expect(ast.children).toHaveLength(9)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
