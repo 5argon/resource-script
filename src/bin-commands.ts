@@ -12,7 +12,7 @@ function changeExtension(file: string, extension: string) {
 type CommentMode = 'object' | 'deep' | 'forced-deep'
 const commentModes: ReadonlyArray<CommentMode> = ['object', 'deep', 'forced-deep']
 
-const argv = yargs(process.argv.slice(2))
+yargs(process.argv.slice(2))
 	.scriptName('resource-script')
 	.demandCommand()
 	.command(

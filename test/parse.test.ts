@@ -12,7 +12,7 @@ import {
 	isBoolArray,
 } from '../src'
 function parseAst(): Ast {
-	const p = parseFile('./test/fixture/fixture.ts')
+	const p = parseFile('./test/fixture/fixture.rs.ts')
 	return p
 }
 
