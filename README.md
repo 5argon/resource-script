@@ -22,6 +22,12 @@ Name the file extension as `.rs.ts` to make it clear that this is not actually a
 
 Some exmaple of "resource file" are .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in editing experience, features, flexibility, and how difficult for machine to parse.
 
+## Installation
+
+```
+yarn add resource-script
+```
+
 ## Motivation
 
 It may seems strange at first to use code as a resource. This section describes some advantages I found.
