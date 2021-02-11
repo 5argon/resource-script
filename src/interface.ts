@@ -69,7 +69,7 @@ export interface TextTemplated {
 	 * Right side of arrow function. From left to right, delimited by transition from normal string to ${}.
 	 * Everything not in `${}` considered as text.
 	 */
-	tokens: Token[]
+	tokens: TemplateSpan[]
 }
 
 export interface Params {
@@ -87,14 +87,14 @@ export interface CustomType {
 }
 
 /**
- * Token means each item in the template string.
- * This ```Hello ${name} world``` contains 3 tokens : `Hello `, `name`, ` world`
+ * Template span means each item in the template string.
+ * This ```Hello ${name} world``` contains 3 spans : `Hello `, `name`, ` world`
  *
- * Text token means anything not in the `${}` and thus a simple `string`.
+ * Text span means anything not in the `${}` and thus a simple `string`.
  * But if an identifier is in `${}` then it is a text anyways but bundled in `Text`.
  */
-export type Token = TextToken | Value
-export type TextToken = string
+export type TemplateSpan = TextSpan | Value
+export type TextSpan = string
 
 export interface NamedTuple {
 	tupleName: string

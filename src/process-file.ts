@@ -7,7 +7,7 @@ import {
 	ValueNode,
 	Text,
 	TextTemplated,
-	Token,
+	TemplateSpan,
 	Numeric,
 	TextArray,
 	NumericArray,
@@ -251,7 +251,7 @@ function processExpression(
 			return parseArrowFunctionParams(x)
 		})
 		const body = exp.body
-		const tokens: Token[] = []
+		const tokens: TemplateSpan[] = []
 		if (ts.isTemplateExpression(body)) {
 			tokens.push(...processTemplateExpression(body, parents, sf, im, dir, depth))
 		}
@@ -302,8 +302,8 @@ function processTemplateExpression(
 	im: ImportMap,
 	dir: string,
 	depth: number,
-): Token[] {
-	const collect: Token[] = []
+): TemplateSpan[] {
+	const collect: TemplateSpan[] = []
 	if (t.head.text !== '') {
 		collect.push(t.head.text)
 	}

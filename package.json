@@ -1,5 +1,20 @@
 {
 	"name": "resource-script",
+	"description": "Resource Script is a programmer-centric data storage format that looks like TypeScript code.",
+	"keywords": [
+		"typescript",
+		"resource",
+		"ast"
+	],
+	"homepage": "http://github.com/5argon/resource-script",
+	"bugs": {
+		"url": "https://github.com/5argon/resource-script/issues",
+		"email": "pyasry@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "github:5argon/resource-script"
+	},
 	"version": "1.0.0",
 	"author": {
 		"name": "Sirawat Pitaksarit",
@@ -14,7 +29,12 @@
 		"resource-script": "node ./dist/bin-commands.js"
 	},
 	"main": "dist/index.js",
+	"types": "dist/index.d.js",
 	"license": "MIT",
+	"files": [
+		"README.md",
+		"dist"
+	],
 	"dependencies": {
 		"tsutils": "^3.20.0",
 		"typescript": "^4.1.4",
