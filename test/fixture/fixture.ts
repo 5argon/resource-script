@@ -43,6 +43,8 @@ const outer = {
 	level18: LitFunc('string1', En.En1, 555),
 	/** comment 1.9 */
 	level19: En.En1,
+	/** comment 1.10 */
+	level110: [En.En1, En.En2],
 }
 
 export default outer

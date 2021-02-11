@@ -24,12 +24,12 @@ test('Outer', () => {
 	const ast = parseAst()
 	expect(ast.keys).toEqual(['outer'])
 	expect(ast.comment).toBe('comment 0')
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 })
 
 test('First inner', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	expect(n0.keys).toEqual(['outer', 'level11'])
@@ -52,7 +52,7 @@ test('First inner', () => {
 
 test('Text', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	if (isGroup(n0)) {
@@ -72,7 +72,7 @@ test('Text', () => {
 
 test('Numeric', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[2]
 	if (isNumeric(n)) {
@@ -86,7 +86,7 @@ test('Numeric', () => {
 
 test('Text Array', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[3]
 	if (isTextArray(n)) {
@@ -100,7 +100,7 @@ test('Text Array', () => {
 
 test('Number Array', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[4]
 	if (isNumericArray(n)) {
@@ -114,7 +114,7 @@ test('Number Array', () => {
 
 test('Boolean', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[5]
 	if (isBool(n)) {
@@ -128,7 +128,7 @@ test('Boolean', () => {
 
 test('Boolean Array', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[6]
 	if (isBoolArray(n)) {
@@ -142,7 +142,7 @@ test('Boolean Array', () => {
 
 test('Named Tuple', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[7]
 	if (isNamedTuple(n)) {
@@ -172,7 +172,7 @@ test('Named Tuple', () => {
 
 test('Enum as Text', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n = ast.children[8]
 	if (isText(n)) {
@@ -184,9 +184,23 @@ test('Enum as Text', () => {
 	}
 })
 
+test('Enum Array as Text Array', () => {
+	const ast = parseAst()
+	expect(ast.children).toHaveLength(10)
+
+	const n = ast.children[9]
+	if (isTextArray(n)) {
+		expect(n.comment).toBe('comment 1.10')
+		expect(n.keys).toEqual(['outer', 'level110'])
+		expect(n.texts).toEqual(['En1', 'En2'])
+	} else {
+		fail()
+	}
+})
+
 test('Arrow function 1 arg', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -217,7 +231,7 @@ test('Arrow function 1 arg', () => {
 
 test('Arrow function 2 args', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -258,7 +272,7 @@ test('Arrow function 2 args', () => {
 
 test('Arrow function with literal function', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)
@@ -333,7 +347,7 @@ test('Arrow function with literal function', () => {
 
 test('Imports', () => {
 	const ast = parseAst()
-	expect(ast.children).toHaveLength(9)
+	expect(ast.children).toHaveLength(10)
 
 	const n0 = ast.children[0]
 	expect(isGroup(n0)).toBe(true)

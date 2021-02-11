@@ -1,8 +1,8 @@
 # resource-script
 
-Resource Script proposes a new programmer-centric data storage format and a code to parse it. After parsing, you get an abstract syntax tree (AST) to do whatever you want.
+Resource Script is a programmer-centric data storage format, and a code written in TypeScript/JavaScript to parse it with Node.JS. After parsing, you get an abstract syntax tree (AST) as a JavaScript object. You can use the provided type information and type guards to traverse the tree more easily in TypeScript.
 
-I didn't invent any syntax or parser, it is essentially just TypeScript-as-a-data. I just shamelessly piggybacked the `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) and use it to parse the script as a data storage.
+It is essentially just TypeScript-as-a-data, I didn't invent any syntax or parser. Thanks to `typescript` [Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) the script file could double as a data storage.
 
 Resource files can prevent hard-coding strings into your code and help with localization by simply swapping the file. For example .NET's [`resx` file](https://docs.microsoft.com/en-us/dotnet/framework/resources/creating-resource-files-for-desktop-apps) or Android's [XML String Resource file](https://developer.android.com/guide/topics/resources/string-resource). It could be as simple as `.json`, `.csv`, or even `.txt` file. Each one has its advantages and disadvantages trade-offs in authoring, features, and flexibility.
 
@@ -10,7 +10,9 @@ Resource files can prevent hard-coding strings into your code and help with loca
 
 It may seems strange at first to use code as a resource. This section describes some advantages I found.
 
-If you go read the [definition and motivation of JSON](https://www.json.org/), this Resource Script is following the same pattern except you replace JavaScript subset thing with TypeScript. Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**. Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
+If you go read the [definition and motivation of JSON](https://www.json.org/), this Resource Script is following the same pattern (is based on a programming language) except you replace JavaScript subset thing with TypeScript.
+
+Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**. Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
 
 The object keys acts as the string resource's hierarchical keys. The arrow function parameter names and type notations which used to not really exist in real TypeScript, here they are interpreted meaningfully by the parser. Limitations of what is allowed as a defined name in TypeScript also applies as a side effect.
 
@@ -34,6 +36,24 @@ Key's name is on the left side using JavaScript object notation.
 
 When storing simple values directly, the parser supports `string`, `number` and `boolean`, along with an array of entirely that type. Array of mixed type is not supported.
 
+
+### String symbol
+
+```ts
+const valueStorage = {
+	string: 'Hello',
+	num: 555,
+	stringArray: ['Hello', 'World'],
+	numArray: [123, 456, 789],
+	isIt: true,
+	flags: [true, true, false],
+}
+export default valueStorage
+```
+
+Key's name is on the left side using JavaScript object notation.
+
+When storing simple values directly, the parser supports `string`, `number` and `boolean`, along with an array of entirely that type. Array of mixed type is not supported.
 ### Hierarchical keys
 
 ```ts

@@ -18,6 +18,7 @@ import {
 	NamedTuple,
 } from './interface'
 import path from 'path'
+import { first } from 'lodash'
 
 type ImportMap = { [k: string]: string }
 
@@ -174,6 +175,34 @@ function processExpression(
 			exp.elements.forEach((x) => {
 				if (ts.isStringLiteral(x)) {
 					collect.push(x.text)
+				} else if (ts.isPropertyAccessExpression(x)) {
+					const iden: string = ts.isIdentifier(x.name)
+						? x.name.text
+						: ts.isPrivateIdentifier(x.name)
+						? x.name.text
+						: ''
+					collect.push(iden)
+				} else {
+					throw new Error('String array must be entirely of the same type.')
+				}
+			})
+			const ret: TextArray = {
+				texts: collect,
+			}
+			return ret
+		} else if (ts.isPropertyAccessExpression(firstElement)) {
+			// Support enums in the array.
+			const collect: string[] = []
+			exp.elements.forEach((x) => {
+				if (ts.isStringLiteral(x)) {
+					collect.push(x.text)
+				} else if (ts.isPropertyAccessExpression(x)) {
+					const iden: string = ts.isIdentifier(x.name)
+						? x.name.text
+						: ts.isPrivateIdentifier(x.name)
+						? x.name.text
+						: ''
+					collect.push(iden)
 				} else {
 					throw new Error('String array must be entirely of the same type.')
 				}
