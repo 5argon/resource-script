@@ -1,4 +1,5 @@
 export * from './parse'
 export * from './to-json'
 export * from './type-guards'
+export * from './helpers'
 export type { Ast, ValueNode, TemplateSpan } from './interface'
