@@ -14,7 +14,7 @@ yarn resource-script to-json -c deep ./my-rs-file.rs.ts
 yarn resource-script to-json -c forced-deep ./my-rs-file.rs.ts
 ```
 
-For example if performend on this Resource Script files :
+For example if performed on this Resource Script files :
 
 ```ts
 import linked from './fixture-sub'

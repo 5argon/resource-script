@@ -245,7 +245,7 @@ Here we essentially hack TypeScript a bit by declaring a **useless function** ju
 
 The parser will be able to get `"pair"` along with each element, which supports the same data type as in other places.
 
-Note that the name on the useless function (`color`, `temperature`, `degree`) are not accessible by the parser, but helps you put in the right thing into each slot of the tuple. If you comment JSDoc the useless function nicely, editor will be nicer to you when you type it.
+Note that the parameter names on the useless function (`color`, `temperature`, `degree`) are not accessible by the parser, but helps you put in the right thing into each slot of the tuple. If you comment JSDoc the useless function nicely, editor will be nicer to you when you type it.
 
 It is also possible to put a tuple inside the template string. It can model something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) in a more organized manner and get better syntax highlighting.
 
