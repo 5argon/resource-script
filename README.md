@@ -28,6 +28,24 @@ Some exmaple of "resource file" are .NET's [`resx` file](https://docs.microsoft.
 yarn add resource-script
 ```
 
+## Usage
+
+Exported functions to programmatically parse a Resource Script file into `Ast` which you can loop through :
+
+```ts
+/**
+ * Throw if the file is not found or malformed.
+ */
+export function parseFile(files: string): Ast
+
+/**
+ * Ignores any import statement.
+ */
+export function parseString(s: string): Ast
+```
+
+Using a bonus Node.JS command to turn Resource Script files into JSON file : [here](./documentation/to-json.md)
+
 ## Motivation
 
 It may seems strange at first to use code as a resource. This section describes some advantages I found.
@@ -65,24 +83,6 @@ export default valueStorage
 Key's name is on the left side using JavaScript object notation.
 
 When storing simple values directly, the parser supports `string`, `number` and `boolean`, along with an array of entirely that type. Array of mixed type is not supported.
-
-### String symbol
-
-```ts
-enum Mood {
-  Neutral,
-  Happy,
-  Sad,
-}
-
-const moodEachDay = {
-  monday: Mood.Neutral,
-  tuesday: [Mood.Neutral, Mood.Sad, Mood.Sad],
-}
-export default moodEachDay
-```
-
-TypeScript `enum` can be used as an instanced string symbol. The `enum`'s type name does not matter and serve just to aid you in auto completion, and maybe later, mass rename them. You will get just the latter part in the parser. (`Neutral`, `Happy`, `Sad`)
 
 ### Hierarchical keys
 
@@ -127,67 +127,6 @@ Add comments to any resource node by typing JSDoc style comment (`/** */`) above
 It is increasingly important, for example when you are making resource for internationalization and needed to give context to the translators for each terms. The comment is a great feature prevalent in coding but not used much as a resource. (XML has comments, but often it does not count as an actual data.)
 
 Some text editor can then show or hide comments, improving editing experience and you no longer fear of typing long comments.
-
-### Great editing experience with TypeScript
-
-- You can get syntax highlighting from code editor to help authoring it. Number and strings are colored differently. You can see placeholder variable in the template literal clearly.
-- You get error checking by your code editor.
-- Possible to use toolings like `prettier` or `eslint` to easily format the resource content.
-
-### Typed templating with arrow functions
-
-```ts
-const greetings = {
-  greet: (name: string) => `Hello, my name is ${name}`,
-  yourMother: (name: string, age: number) => `My mom is named ${name} and she is ${age} years old.`,
-}
-export default greetings
-```
-
-Instead of using surrounders like other solutions (e.g. `My name is {name}`), Resource Script uses an arrow function and JavaScript template literal dollar sign syntax instead. Why would we want to do this now that we have to type `name` 2 times, dollar sign adds noise, and also need to type the arrow?
-
-- Each template variable is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a number.) Resource Script parser can get type information bound to each template variable by the colon `:` syntax as a string. Then it depends how you want to use them.
-- Note that the type is not real, you are simply returned a string of that type. Supported types are `string`, `number`, `boolean`, and any type reference. You can define `type` and use that type so you get the string of that type's name in the parser.
-- Syntax is highlighted, though in other templating solutions editor likely has good enough extension to highlight things in the surrounders. Note that if you use template placeholder in JSON on your own, it will not get highlighted as JSON only knows "string" and editor highlights all that as strings. So this is a JSON with template highlighting of sorts.
-- Easier to see the list of parameters because they are collected on the left side of the arrow. It is impossible to mistype template literal on the right side either since it is defined as an argument token on the arrow function. So the "must type 2 times" is mostly mitigated by auto completion. In long sentence, it is quite useful to see what makes the string dynamic at a glance. (You can also still read it directly, though $ sign I agree is a bit distracting.)
-- Using the template variable multiple times (though it is rare) will has syntax checking that they are all indeed the same "instance".
-
-### Named tuples
-
-Resource Script can define a named, typed tuples. We borrow function syntax from TypeScript.
-
-```ts
-enum Temp {
-  Hot,
-  Cold,
-}
-function pair(color: string, temperature: Temp, degree: number) {}
-
-const days = {
-  monday: pair('yellow', Temp.Hot, 38),
-  tuesday: pair('pink', Temp.Cold, 19),
-  wednesday: pair('green', Temp.Hot, 40),
-}
-export default days
-```
-
-Here we essentially hack TypeScript a bit by declaring a **useless function** just so we can use it.
-
-The parser will be able to get `"pair"` along with each element, which supports the same data type as in other places. Note that the type on the useless function are not accessible by the parser, but helps you put in the right thing into each slot of the tuple.
-
-It is also possible to put a tuple inside the template string. It can model something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) in a more organized manner and get better syntax highlighting.
-
-```ts
-function plural(num: number, singular: string, plural: string) {}
-
-const pluralizers = {
-  fish: (n: number) => `I see ${plural(n, 'fish', 'fishes')}}.`,
-  chip: (n: number) => `I see ${plural(n, 'chip', 'chips')}}.`,
-}
-export default pluralizers
-```
-
-When you use arrow function parameters ("identifier") in the tuple (like `n` in the example) it will be counted as `string` of that name as opposed to an import (explained in the next section). Remember that this is not an actual arrow function of TypeScript, we just borrowed the syntax. The function does not actually "work".
 
 ### Resource hierarchy spanning multiple files with imports
 
@@ -235,6 +174,100 @@ export default names
 Alluding to JSON starting with `{ }` always, Resource Script also always start with "declaration" but is named. The parser can get both the name and comment metadata attached to this declaration as the first item in the AST.
 
 This make it possible to use it as a "file name" metadata that is built into the data. You can load a bunch of Resource Script without caring about file names, because they are embeded inside.
+
+### String symbol
+
+```ts
+enum Mood {
+  Neutral,
+  Happy,
+  Sad,
+}
+
+const moodEachDay = {
+  monday: Mood.Neutral,
+  tuesday: [Mood.Neutral, Mood.Sad, Mood.Sad],
+}
+export default moodEachDay
+```
+
+All earlier features are just using JavaScript language as a medium. From here on we will also utilize TypeScript.
+
+TypeScript `enum` can be used as an instanced string symbol. The `enum`'s type name does not matter and serve just to aid you in auto completion, and maybe later, mass rename them. You will get just the latter part in the parser. (`Neutral`, `Happy`, `Sad`)
+
+It does not matter if you give concrete value to each enum as the parser only use the lexer. (Does not actually understand "symbols" and can jump to the source, it acts just like human reading the code linearly.) Some future work may allow replacing with concrete string value so you can use restricted name that is not possible as an identifier in TypeScript.
+
+### Typed templating with arrow functions
+
+```ts
+const greetings = {
+  greet: (name: string) => `Hello, my name is ${name}`,
+  yourMother: (name: string, age: number) =>
+    `My mom is named ${name} and she is ${age} years old.`,
+}
+export default greetings
+```
+
+Instead of using surrounders like other solutions (e.g. `My name is {name}`), Resource Script uses an arrow function and JavaScript template literal dollar sign syntax instead. Why would we want to do this now that we have to type `name` 2 times, dollar sign adds noise, and also need to type the arrow?
+
+Advantages inherited from JavaScript :
+
+- Syntax is highlighted, though in other templating solutions editor likely has good enough extension to highlight things in the surrounders. Note that if you use template placeholder in JSON on your own, it will not get highlighted as JSON only knows "string" and editor highlights all that as strings. So this is a JSON with template highlighting of sorts.
+- Easier to see the list of parameters because they are collected on the left side of the arrow. It is impossible to mistype template literal on the right side either since it is defined as an argument token on the arrow function. So the "must type 2 times" is mostly mitigated by auto completion. In long sentence, it is quite useful to see what makes the string dynamic at a glance. (You can also still read it directly, though $ sign I agree is a bit distracting.)
+- Using the template variable multiple times (though it is rare) will has syntax checking that they are all indeed the same "instance".
+
+Adventages inherited from TypeScript :
+
+- Each template variable is typed. Many solution encounter difficulty where a "switch case" must be provided for the parser to decide on what to do. (e.g. pluralization needs to know that the entered value is a "string of number".) Resource Script parser can get type information bound to each template variable by the colon `:` syntax as a string. Then it depends how you want to use them.
+- Note that the type is not real, you are simply returned a string of that type. Think of it as annotating an another arbitrary string besides the argument, which those strings happened to read "string", "number", "boolean" and so on. Type reference token is also supported (e.g. `Date`). You can define `type` and use that type so you get the string of that type's name in the parser.
+- When you use the parameters that is type annotated with named tuples (described in the next section), the types are actually useful as an error checking.
+
+### Named tuples
+
+Resource Script can define a named, typed tuples. We borrow function syntax from TypeScript.
+
+```ts
+enum Temp {
+  Hot,
+  Cold,
+}
+function pair(color: string, temperature: Temp, degree: number) {}
+
+const days = {
+  monday: pair('yellow', Temp.Hot, 38),
+  tuesday: pair('pink', Temp.Cold, 19),
+  wednesday: pair('green', Temp.Hot, 40),
+}
+export default days
+```
+
+Here we essentially hack TypeScript a bit by declaring a **useless function** just so we can use it.
+
+The parser will be able to get `"pair"` along with each element, which supports the same data type as in other places.
+
+Note that the name on the useless function (`color`, `temperature`, `degree`) are not accessible by the parser, but helps you put in the right thing into each slot of the tuple. If you comment JSDoc the useless function nicely, editor will be nicer to you when you type it.
+
+It is also possible to put a tuple inside the template string. It can model something like [ICU transforms](https://unicode-org.github.io/icu/userguide/transforms/general/) in a more organized manner and get better syntax highlighting.
+
+```ts
+function plural(num: number, singular: string, plural: string) {}
+
+const pluralizers = {
+  fish: (n: number) => `I see ${plural(n, 'fish', 'fishes')}}.`,
+  chip: (n: number) => `I see ${plural(n, 'chip', 'chips')}}.`,
+}
+export default pluralizers
+```
+
+The same that `num`, `singular`, and `plural` is inaccessible to the parser, `number`, `string`, and `string` here are also inaccessible. But TypeScript now help you put in the right stuff inside the right slot of the tuple. Combined with type annotated in the arrow function (`n: number`), this can vastly improve editing experience because the type are more real and useful.
+
+When you use arrow function parameters ("identifier") in the tuple (like `n` in the example) it will be counted as `string` of that name as opposed to an import (explained in the next section). Remember that this is not an actual arrow function of TypeScript, we just borrowed the syntax. The function does not actually "work".
+
+### Great editing experience
+
+- You can get syntax highlighting from code editor to help authoring it. Number and strings are colored differently. You can see placeholder variable in the template literal clearly.
+- You get error checking by your code editor.
+- Possible to use toolings like `prettier` or `eslint` to easily format the resource content.
 
 ## Parsing into an Abstract Syntax Tree (AST)
 
