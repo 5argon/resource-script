@@ -25,8 +25,10 @@ Some exmaple of "resource file" are .NET's [`resx` file](https://docs.microsoft.
 ## Installation
 
 ```
-yarn add resource-script
+yarn add -D resource-script
 ```
+
+(It is likely that processing Resource Script is a development-only dependency.)
 
 ## Usage
 
