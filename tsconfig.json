@@ -3,7 +3,7 @@
 		"composite": true,
 		"rootDir": "src",
 		"outDir": "dist",
-		"target": "es5",
+		"target": "ES2019",
 		"module": "commonjs",
 		"strict": true,
 		"esModuleInterop": true,

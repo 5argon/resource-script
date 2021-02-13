@@ -130,6 +130,49 @@ It is increasingly important, for example when you are making resource for inter
 
 Some text editor can then show or hide comments, improving editing experience and you no longer fear of typing long comments.
 
+### Tagged metadata with `@see`
+
+```ts
+let characterLimit: any
+let manualLineBreak: any
+
+const cjkProblem = {
+  homePage: {
+    /**
+     * Page's title. Has space at most 2 lines, each line can contain 10 characters.
+     * Likely 2 lines when viewed on mobile.
+     * @see characterLimit 10
+     * @see manualLineBreak
+     */
+    title: 'Extremely overly long title of the website. Welcome home!',
+  },
+}
+export default cjkProblem
+```
+
+Consider this real situation : I wanted to model a localization terms but they need more data than the key and string value, and even more than a comment explaining where that term will be used.
+
+Line breaking is a huge problem for [CJK languages](https://en.wikipedia.org/wiki/CJK_characters) because they don't have spaces to help breaking. Every character is breakable, but breaking at the wrong spot would cause it to be unreadable or even cause misunderstanding because each individual kanji means differently thing without the next character.
+
+Solutions like [Budou](https://github.com/google/budou) attempts to combat this the most gracefully but also painstakingly by marking every possible location that it is allowed to break, then wrap `<span>` to prevent it break in the middle of character sequences we wanted to tie together. Ideally, all CJK text would need to be marked like this to be truly ubiquitous, usable on any UI elements, and any responsive arrangement. Imagine English being CJK, and "Submit" is in a button that was once a single line. When viewed on mobile the button gets too narrow and try to expands vertically. Now the text on the button reads "Sub (next line) mit". English doesn't break where there are no spaces, but in other languages this could happen for real.
+
+Simpler solution also exists, by specifying character limit per line where that term would be used, the translator can manually insert a line break if the translation goes over the limit. This make the text less flexible, but make the translated string easier for the translator. (Imagine telling the translator "please put a `|` pipe character everywhere the sentence could be broken safely so I could turn them into `<span>` wrap!") This is good for non-responsive design, for example in novel game where the text box is always a specific width and characters are fixed size. (Other than when the character is shouting and the text gets bigger.. we may need to tell the translator that as well.)
+
+How about explaining to the translator that a particular text is using markdown? (e.g. adding \*\* to make it bold) Rather than typing it down in the comment to explain, you likely want to just tag them.
+
+Enough talk, but it seems we need much more metadata per object. You don't want to add it as a field to bloat the object either, you want to just "attach" them, they maybe just as important as the data but should not in the same "dimension". Therefore you can use the JSDoc comment space.
+
+But these metadata would be nice if they are not counted as a `string` bundled with the comment. For this purpose, the parser will exclude `@see` JSDoc tags from the comment and provide them separately. I call this Tagged Metadata.
+
+- `@see` tags cannot be in the same line as string comment. The line has to start with `@see`.
+- Each `@see` must be followed by one of these formats :
+  - `@see label` : The parser returns the label as string. Label must not contain any space.
+  - `@see label value` : The parser return the label as string like above, but also value in a separated field. If value contains any space bar or not parsable to base-10 `number`, all are bundled as `string`. If parsable to base-10, it is returned as a `number` to you.
+- You can add the next `@see` on the same line. e.g. `@see label1 100 @see label2 hello world @see label3` would give you back 3 sets of tagged metadata.
+- The reason it has to be `@see` even though it doesn't make much sense in meaning, is because VSCode recently supports following the identifier on the right of `@see`, and also allows renaming, etc. This let you "define" the category of metadata to use everywhere systematically. An example above shows defining an identifier for usage with `let label: any`. But it also works for imported identifier from other modules which you may want to use in multiple Resource Scripts.
+
+See different forms the Tagged Metadata could be in the [test fixture file](./test/fixture/tagged-metadata.rs.ts).
+
 ### Resource hierarchy spanning multiple files with imports
 
 ```ts
@@ -289,7 +332,7 @@ export function parseString(s: string): Ast
 
 When traversing the returned `Ast` object in TypeScript, provided type guards will be useful. (This is similar pattern to the TypeScript's Compiler API.)
 
-I didn't write any documentation on the shape of the returned object yet but it should be fairly straightforward to learn from the `interface.ts` file. Type guards can also be learned from `type-guards.ts` file. Also of course the test file will show a usage from package consumer's perspective.
+I didn't write any documentation on the shape of the returned object yet but it should be fairly straightforward to learn from the [`interface.ts` file](./src/interface.ts). Type guards can also be learned from [`type-guards.ts` file](./src/type-guards.ts). Also of course the [test file](./test/parse.test.ts) will show a usage from package consumer's perspective.
 
 ## Converting a Resource Script to JSON
 

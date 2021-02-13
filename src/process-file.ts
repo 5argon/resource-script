@@ -16,8 +16,10 @@ import {
   NamedTupleParam,
   Value,
   NamedTuple,
+  Tag,
 } from './interface'
 import path from 'path'
+import { NodeArray } from 'typescript'
 
 type ImportMap = { [k: string]: string }
 
@@ -54,6 +56,7 @@ export function process(
   dir: string,
 ): Ast {
   let comment: string | undefined = undefined
+  let tags: Tag[] = []
   let name: string = ''
   let nodes: ValueNode[] = []
   let im: ImportMap = {}
@@ -68,7 +71,9 @@ export function process(
       }
     }
     if (ts.isVariableStatement(node)) {
-      comment = getComment(node, sf)
+      const ct = getCommentAndTags(node, sf)
+      comment = ct.comment
+      tags = ct.tags
       const decs = node.declarationList.declarations
       if (decs.length > 0) {
         const dec = decs[0]
@@ -93,7 +98,12 @@ export function process(
     // Silently pass all other top level declarations.
     // User can declare other helpers creatively.
   })
-  const ast: Ast = { children: nodes, comment: comment, keys: newParent }
+  const ast: Ast = {
+    children: nodes,
+    comment: comment,
+    keys: newParent,
+    tags: tags,
+  }
   return ast
 }
 
@@ -107,7 +117,7 @@ function propAss(
 ): ValueNode {
   const newParents = [...parents]
   const name: string = ts.isIdentifier(c.name) ? c.name.text : ''
-  const comment = getComment(c, sf)
+  const ct = getCommentAndTags(c, sf)
   newParents.push(name)
   const initializer = c.initializer
   const sup = processExpression(
@@ -119,7 +129,7 @@ function propAss(
     currentDepth,
     true,
   )
-  return { ...sup, comment: comment, keys: newParents }
+  return { ...sup, comment: ct.comment, keys: newParents, tags: ct.tags }
 }
 
 function processExpression(
@@ -423,13 +433,55 @@ function processObjectLiteral(
   return nodes
 }
 
+interface CommentAndTags {
+  comment: string | undefined
+  tags: Tag[]
+}
+
 /**
  * Get comment above the current node.
  */
-function getComment(node: ts.Node, sf: ts.SourceFile): string | undefined {
+function getCommentAndTags(node: ts.Node, sf: ts.SourceFile): CommentAndTags {
   const docs = utils.getJsDoc(node, sf)
-  if (docs.length > 0) {
-    return docs[0].comment ?? undefined
+  let commentRaw: string | undefined
+  if (docs.length === 0) {
+    return { comment: undefined, tags: [] }
   }
-  return undefined
+  commentRaw = docs[0].comment
+  return {
+    comment: commentRaw,
+    tags: docs[0].tags ? processTags(docs[0].tags) : [],
+  }
+}
+
+function processTags(c: NodeArray<ts.JSDocTag>): Tag[] {
+  function processSee2(s: undefined | string): undefined | string | number {
+    if (s === undefined) {
+      return undefined
+    }
+    const spaceSplit = s.split(' ')
+    if (s.length === 0 || spaceSplit.length === 0) {
+      return undefined
+    }
+    // * fix weird bug where there is nothing following the tag and it take
+    // "*" from the next line as its tag.
+    if (spaceSplit.length === 1) {
+      const parsed = Number.parseFloat(spaceSplit[0])
+      if (isNaN(parsed)) {
+        return spaceSplit[0] === '*' ? undefined : spaceSplit[0]
+      } else {
+        return parsed
+      }
+    }
+    return s === '*' ? undefined : s
+  }
+
+  const tags: Tag[] = c
+    .map<Tag>((x) => {
+      const hackText: string = (x as any).name.name.text
+      const t: Tag = { tagName: hackText, value: processSee2(x.comment) }
+      return t
+    })
+    .filter((x) => x.tagName !== '')
+  return tags
 }

@@ -8,9 +8,18 @@ export type ValueNode = Value & BaseNode
 export interface BaseNode {
   comment: string | undefined
   /**
+   * The `@see` inside comment ordered left to right, top to bottom.
+   */
+  tags: Tag[]
+  /**
    * Collected hierarchical keys from root parent leading to this node.
    */
   keys: string[]
+}
+
+export interface Tag {
+  tagName: string
+  value: undefined | string | number
 }
 
 /**
