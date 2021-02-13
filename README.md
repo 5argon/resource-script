@@ -54,13 +54,13 @@ It may seems strange at first to use code as a resource. This section describes 
 
 If you go read the [definition and motivation of JSON](https://www.json.org/), this Resource Script is following the same pattern (is based on a programming language) except you replace JavaScript subset thing with TypeScript.
 
-Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**.
+Unlike JSON, Resource Script is actually a valid TypeScript code (though there is no reason to use it as a code). But unlike an actual code, **language elements are used literally as a part of string resource**. And many language tokens are helpful for attaching bell and whistles to your data. Ever wanted to "attach" a comment to a JSON object that is actually meaningful to the parser without making a key "comment"? Now it is a reality, you get a dedicated slot to add comments in many places.
 
 We "borrow" the TypeScript language server to help us write an easy to maintain resource file. CSV is no longer the only format with a "dedicated editor". With Resource Script, your code editor is the ideal editor. We gain an entire ecosystem of editor plugins used to work with TypeScript as well when our resource is exactly TypeScript like this. (e.g. `eslint`, `prettier`, etc.)
 
 ## Weaknesses
 
-Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
+Everyone building the next new thing claims they are lightweight. Resource Script is proudly **heavyweight**. Compared with JSON, it is more difficult for machine to parse (as evidence by the work of TypeScript team over the years) but easier for human to write with all the toolings already available. Luckily the work has already been done in `typescript` package and I just simply use it as a parser.
 
 Still the parsing is probably quite heavier than others that I would **not recommend** Resource Script for realtime application. `tsc` is not fast, as [discussed by the Deno collaborators](https://github.com/denoland/deno/issues/5432). Resource Script would be a good fit for data that is quite "cold" that you want to put more emphasis to editing experience (especially if the programmers are the editor). It can then be pre-processed into more machine friendly data ahead of time. This also make it very difficult to write an importer code that generates Resource Script. (As opposed to various "to JSON" tools available everywhere.) Making Resource Script quite one-way. You should understand all these weaknesses before using it.
 
@@ -126,7 +126,7 @@ export default commentExample
 
 Add comments to any resource node by typing JSDoc style comment (`/** */`) above. (It won't work with just `//` becuase it won't "bound" to the code.) This make all resource node of Resource Script a tuple with an optional auxillary string storage by default.
 
-It is increasingly important, for example when you are making resource for internationalization and needed to give context to the translators for each terms. The comment is a great feature prevalent in coding but not used much as a resource. (XML has comments, but often it does not count as an actual data.)
+It is increasingly important, for example when you are making resource for internationalization and needed to give context to the translators for each terms. The comment is a great feature prevalent in coding but not used much as a resource. (XML has comments, but often it does not count as an actual data. Not binding to the tag below, even.)
 
 Some text editor can then show or hide comments, improving editing experience and you no longer fear of typing long comments.
 

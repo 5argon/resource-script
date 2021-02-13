@@ -124,5 +124,5 @@ It converts to :
   - `'object'` : Only transfer comments over the object to `"comment"` JSON key.
   - `'deep'` : Also make comment on any non-object keys to turns the value to be `{ comment: ___, value: ___ }` instead to make room for storing the comment. This change the shape of data significantly for fields that has comment.
   - `'forced-deep'` : Same as `'deep'` but even fields without comments are forced to have `{ comment: "", value: ___}`. (Empty string comment.)
-- All the `${}` inside templated strings are converted into a simple `{}` without the dollar sign, should you want to author templated JSON in TypeScript fashion where you can get some syntax highlighting help.
+- All the `${}` inside templated strings are converted into a simple `{}` without the dollar sign, should you want to author templated JSON in TypeScript fashion where you can get some syntax highlighting help. (TODO: Make the surrounders configurable e.g. double curly brackets. PR welcome!)
 - Named tuples output almost as-is and doesn't make much sense.
